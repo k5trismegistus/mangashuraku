@@ -1,0 +1,28 @@
+{
+  "name": "mangashuraku",
+  "version": "1.0.0",
+  "description": "manga hosting webapp",
+  "main": "index.js",
+  "scripts": {
+    "build": "tsc",
+    "start": "node dist/index.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+ssh://git@github.com/k5trismegistus/mangashuraku.git"
+  },
+  "author": "keigo yamamoto <k5.trismegistus@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/k5trismegistus/mangashuraku/issues"
+  },
+  "homepage": "https://github.com/k5trismegistus/mangashuraku#readme",
+  "devDependencies": {
+    "@types/express": "^4.16.0",
+    "typescript": "^3.0.1"
+  },
+  "dependencies": {
+    "express": "^4.16.3"
+  }
+}
