@@ -1,4 +1,5 @@
 import { S3 } from 'aws-sdk';
+import { PathLike, readFile } from 'fs';
 
 const IMAGE_BUCKET = 'mangashuraku'
 const THUMBNAIL_BUCKET = 'mangashuraku-thumbnail'
@@ -30,17 +31,27 @@ const minioClient = new S3({
 //   })
 // });
 
-const uploadImage = (filepath, filebody) => {
-  console.log(filepath)
+const uploadImage = (key: string, filepath: PathLike) => {
+  return new Promise((resolve, reject) => {
+    readFile(filepath, (err, data) => {
+      if (err) {
+        console.log(err)
+        return reject(err)
+      }
 
-  minioClient.putObject({
-    Bucket: IMAGE_BUCKET,
-    Key: filepath,
-    Body: filebody
-  }, (err, etag) => {
-    if (err) return console.log(err)
-    console.log('File uploaded successfully.')
-  });
+      minioClient.putObject({
+        Bucket: IMAGE_BUCKET,
+        Key: key,
+        Body: data
+      }, (err, etag) => {
+        if (err) {
+          console.log(err)
+          return reject(err)
+        }
+        resolve(etag)
+      })
+    })
+  })
 }
 
 export { uploadImage }

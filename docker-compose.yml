@@ -5,6 +5,8 @@ services:
     build: .
     ports:
       - '3001:3001'
+    volumes:
+      - ./:/app
     links:
       - mongo
       - minio
@@ -15,15 +17,9 @@ services:
     volumes:
       - ./data/minio/data:/export
       - ./data/minio/config:/root/.minio
+    ports:
+      - 9000:9000
     environment:
       MINIO_ACCESS_KEY: AKIA_MINIO_ACCESS_KEY
       MINIO_SECRET_KEY: minio_secret_key
     command: server /export
-  nginx:
-    build: './nginx'
-    ports:
-      - '8081:8081'
-    volumes:
-      - './nginx/logs:/var/log/nginx'
-    links:
-      - app

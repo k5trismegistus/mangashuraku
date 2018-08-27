@@ -1,5 +1,8 @@
 node_modules
 
+# minio
+data
+
 /dist/*
 !/dist/.keep
 
