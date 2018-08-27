@@ -1,21 +1,26 @@
 import { readdir, statSync, mkdir } from 'fs'
 import { join, extname } from 'path'
 import { mkdirPromise } from '../utils/mkdirPromise'
+import { uploadImage } from '../utils/minioClient'
 const decompress = require('decompress')
+
+import { File } from 'decompress'
 
 const tmpPath = 'tmp'
 
 const extract = (filename) => {
-
-  console.log(filename)
   mkdirPromise(join(tmpPath, filename))
     .then((path) => {
-      console.log(path)
       decompress(join('import', filename), path, {
-        filter: ((file) => extname(file.path) === '.jpg' || extname(file.path) === '.png')
+        filter: ((file) => (
+          (extname(file.path) === '.jpg' || extname(file.path) === '.png'))
+            && (file.path.indexOf('MACOSX') === -1)
+        )
+      }).then((files) => {
+        Array.from(files).forEach((file: File) => {
+          uploadImage(file.path, file.data)
+        })
       })
-        .then((files) => console.log(files))
-        .catch((err) => console.log(err))
     })
     .catch((err) => console.log(err))
 
@@ -29,6 +34,4 @@ readdir('import/', (err, files) => {
       file.endsWith('.zip') && statSync(join('import', file)).isFile()
     ))
     .map((filename) => extract(filename))
-
-  setTimeout(() => {}, 10000)
 })
