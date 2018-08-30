@@ -1,6 +1,6 @@
-import { mkdir, PathLike, writeFileSync } from 'fs';
+import { mkdir, PathLike } from 'fs';
 
-type Resolve = (path: PathLike) => void
+type Resolve = (path: string) => void
 type Reject = (err: NodeJS.ErrnoException) => void
 
 export const mkdirPromise = (path: PathLike, mode?: string | number) => {
@@ -9,7 +9,8 @@ export const mkdirPromise = (path: PathLike, mode?: string | number) => {
       if (err) {
         reject(err)
       } else {
-        resolve(path)
+        const pathstring = typeof path === 'string' ? path : path.toString()
+        resolve(pathstring)
       }
     })
   })

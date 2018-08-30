@@ -2,15 +2,13 @@ import { readdir, statSync, mkdir, PathLike, unlink } from 'fs'
 import { join, basename, extname } from 'path'
 import { mkdirPromise } from '../utils/mkdirPromise'
 import { uploadImage } from '../utils/minioClient'
-
-const decompress = require('decompress')
-const rimraf = require('rimraf')
-
-import { ImportContext } from '../models/importContext'
-
-const uuid = require('uuid')
-
+import { genThumbnail } from '../utils/genThumbnail'
 import { File } from 'decompress'
+import { ImportContext } from '../models/importContext'
+import * as decompress from 'decompress'
+import * as imagemagick from 'imagemagick'
+import * as rimraf from 'rimraf'
+import * as uuid from 'uuid'
 
 const importDir = 'import'
 const tmpDir = 'tmp'
@@ -21,7 +19,7 @@ const extract = (ctx: ImportContext) => {
     ctx.tmpDir = workDir
 
     mkdirPromise(workDir)
-      .then((tmpDirPath) => {
+      .then((tmpDirPath: string) => {
         decompress(ctx.originalFilepath, tmpDirPath, {
           filter: ((file) => (
             (extname(file.path) === '.jpg' || extname(file.path) === '.png'))
@@ -39,6 +37,22 @@ const extract = (ctx: ImportContext) => {
   })
 }
 
+const createThumbnails = (ctx: ImportContext) => {
+  return new Promise((resolve, reject) => {
+    mkdirPromise(join(ctx.tmpDir, 'thumbnail')).then((tmpDir: string) => {
+      Promise.all(
+        ctx.pages.map((page) => {
+          return new Promise((res, rej) => {
+            const filename = basename(page)
+            genThumbnail(page, tmpDir, 320)
+          })
+        })
+      ).then(() => resolve(ctx))
+       .catch(reject)
+    })
+  })
+}
+
 const uploadImages = (ctx: ImportContext) => {
   return new Promise((resolve, reject) => {
     ctx.pages.forEach((pagePath) => {
@@ -49,6 +63,10 @@ const uploadImages = (ctx: ImportContext) => {
         .catch(reject)
     })
   })
+}
+
+const uploadThumbnails = (ctx: ImportContext) => {
+
 }
 
 const cleanUp = (ctx: ImportContext) => {
@@ -71,7 +89,8 @@ const importArchive = (zipFilePath) => {
 
   extract(ctx)
     .then(uploadImages)
-    .then(cleanUp)
+    .then(createThumbnails)
+    // .then(cleanUp)
     .catch((err) => {
       console.log(err)
     })
