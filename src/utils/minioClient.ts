@@ -54,4 +54,28 @@ const uploadImage = (key: string, filepath: PathLike) => {
   })
 }
 
-export { uploadImage }
+// Looks almost same as #uploadImage, but it may be changed in future...
+const uploadThumbnail = (key: string, filepath: PathLike) => {
+  return new Promise((resolve, reject) => {
+    readFile(filepath, (err, data) => {
+      if (err) {
+        console.log(err)
+        return reject(err)
+      }
+
+      minioClient.putObject({
+        Bucket: THUMBNAIL_BUCKET,
+        Key: key,
+        Body: data
+      }, (err, etag) => {
+        if (err) {
+          console.log(err)
+          return reject(err)
+        }
+        resolve(etag)
+      })
+    })
+  })
+}
+
+export { uploadImage, uploadThumbnail }

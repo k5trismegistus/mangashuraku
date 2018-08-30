@@ -1,12 +1,11 @@
 import { readdir, statSync, mkdir, PathLike, unlink } from 'fs'
 import { join, basename, extname } from 'path'
 import { mkdirPromise } from '../utils/mkdirPromise'
-import { uploadImage } from '../utils/minioClient'
+import { uploadImage, uploadThumbnail } from '../utils/minioClient'
 import { genThumbnail } from '../utils/genThumbnail'
 import { File } from 'decompress'
 import { ImportContext } from '../models/importContext'
 import * as decompress from 'decompress'
-import * as imagemagick from 'imagemagick'
 import * as rimraf from 'rimraf'
 import * as uuid from 'uuid'
 
@@ -45,9 +44,13 @@ const createThumbnails = (ctx: ImportContext) => {
           return new Promise((res, rej) => {
             const filename = basename(page)
             genThumbnail(page, tmpDir, 320)
+              .then(() =>res(join(tmpDir, filename)))
           })
         })
-      ).then(() => resolve(ctx))
+      ).then((thumbnailPaths: Array<string>) => {
+        ctx.thumbnails = thumbnailPaths.sort()
+        resolve(ctx)
+      })
        .catch(reject)
     })
   })
@@ -66,7 +69,15 @@ const uploadImages = (ctx: ImportContext) => {
 }
 
 const uploadThumbnails = (ctx: ImportContext) => {
+  return new Promise((resolve, reject) => {
+    ctx.thumbnails.forEach((thumbnailPath) => {
+      const key = `${ctx.archiveUUID}/${basename(thumbnailPath)}`
 
+      uploadThumbnail(key, thumbnailPath)
+        .then((etag) => resolve(ctx))
+        .catch(reject)
+    })
+  })
 }
 
 const cleanUp = (ctx: ImportContext) => {
@@ -90,6 +101,7 @@ const importArchive = (zipFilePath) => {
   extract(ctx)
     .then(uploadImages)
     .then(createThumbnails)
+    .then(uploadThumbnails)
     // .then(cleanUp)
     .catch((err) => {
       console.log(err)
