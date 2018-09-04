@@ -1,3 +1,5 @@
+require('dotenv').config()
+
 import { readdir, statSync, mkdir, PathLike, unlink } from 'fs'
 import { join, basename, extname } from 'path'
 import { mkdirPromise } from '../utils/mkdirPromise'
@@ -8,11 +10,14 @@ import { ImportContext } from '../models/importContext'
 import * as decompress from 'decompress'
 import * as rimraf from 'rimraf'
 import * as uuid from 'uuid'
+import { insertBook } from '../repository/books_repository';
+import { connectDb } from '../repository/base_repository';
+import { Db } from 'mongodb';
 
 const importDir = 'import'
 const tmpDir = 'tmp'
 
-const extract = (ctx: ImportContext) => {
+const extract = (ctx: ImportContext): Promise<ImportContext> => {
   return new Promise((resolve, reject) => {
     const workDir = join(tmpDir, ctx.originalFilename)
     ctx.tmpDir = workDir
@@ -28,7 +33,6 @@ const extract = (ctx: ImportContext) => {
           ctx.pages = Array.from(files)
                            .map((file: File) => join(workDir, file.path))
                            .sort()
-          console.log(ctx)
 
           resolve(ctx)
         })
@@ -36,7 +40,7 @@ const extract = (ctx: ImportContext) => {
   })
 }
 
-const createThumbnails = (ctx: ImportContext) => {
+const createThumbnails = (ctx: ImportContext): Promise<ImportContext> => {
   return new Promise((resolve, reject) => {
     mkdirPromise(join(ctx.tmpDir, 'thumbnail')).then((tmpDir: string) => {
       Promise.all(
@@ -56,7 +60,7 @@ const createThumbnails = (ctx: ImportContext) => {
   })
 }
 
-const uploadImages = (ctx: ImportContext) => {
+const uploadImages = (ctx: ImportContext): Promise<ImportContext> => {
   return new Promise((resolve, reject) => {
     ctx.pages.forEach((pagePath) => {
       const key = `${ctx.archiveUUID}/${basename(pagePath)}`
@@ -68,7 +72,7 @@ const uploadImages = (ctx: ImportContext) => {
   })
 }
 
-const uploadThumbnails = (ctx: ImportContext) => {
+const uploadThumbnails = (ctx: ImportContext): Promise<ImportContext> => {
   return new Promise((resolve, reject) => {
     ctx.thumbnails.forEach((thumbnailPath) => {
       const key = `${ctx.archiveUUID}/${basename(thumbnailPath)}`
@@ -80,14 +84,24 @@ const uploadThumbnails = (ctx: ImportContext) => {
   })
 }
 
-const cleanUp = (ctx: ImportContext) => {
+const registerToDb = (ctx: ImportContext): Promise<ImportContext> => {
+  return new Promise((resolve, reject) => {
+    connectDb().then((db: Db) => {
+      insertBook(db, {
+        archiveUUID: ctx.archiveUUID,
+        originalName: ctx.originalFilename,
+        pages: ctx.uploadedPageKeys,
+        thumbnails: ctx.uploadedThumbnailKeys
+      }).then(() => resolve(ctx))
+    })
+  })
+}
+
+const cleanUp = (ctx: ImportContext): Promise<ImportContext> => {
   return new Promise((resolve, reject) => {
     rimraf(ctx.tmpDir, (err) => {
-      if (err) {
-        reject(err)
-      } else {
-        resolve(ctx)
-      }
+      if (err) return reject(err)
+      resolve(ctx)
     })
   })
 }
@@ -102,7 +116,9 @@ const importArchive = (zipFilePath) => {
     .then(uploadImages)
     .then(createThumbnails)
     .then(uploadThumbnails)
-    // .then(cleanUp)
+    .then(registerToDb)
+    .then(cleanUp)
+    .then((ctx: ImportContext) => console.log(`finished: ${basename(zipFilePath)}`))
     .catch((err) => {
       console.log(err)
     })
