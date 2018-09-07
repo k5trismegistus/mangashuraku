@@ -1,12 +1,10 @@
 import * as Express from 'express';
 
+import { initApi } from './api'
+
 const app = Express();
 
-app.get(
-    '/',
-    (req: Express.Request, res: Express.Response) => {
-        return res.send('Hello world.');
-    });
+initApi(app)
 
 app.listen(
     3001,

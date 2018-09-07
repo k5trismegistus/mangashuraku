@@ -10,6 +10,8 @@ services:
     links:
       - mongodb
       - minio
+    working_dir: '/app'
+    command: 'npm run start'
   mongodb:
     image: mongo:3.2-jessie
     ports:
