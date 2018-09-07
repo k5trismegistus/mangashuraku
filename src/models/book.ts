@@ -9,6 +9,8 @@ export interface IBookParameter {
   genreId?: ObjectId[]
   pages: string[]
   thumbnails: string[]
+  cover: string
+  coverThumbnail: string
 }
 
 export interface IBook extends IBookParameter {
@@ -25,6 +27,8 @@ export class Book implements IBook {
   genreId?: ObjectId[]
   pages: string[]
   thumbnails: string[]
+  cover: string
+  coverThumbnail: string
 
   constructor(params: Book) {
     this.id = params.id

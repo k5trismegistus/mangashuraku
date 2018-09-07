@@ -91,7 +91,9 @@ const registerToDb = (ctx: ImportContext): Promise<ImportContext> => {
         archiveUUID: ctx.archiveUUID,
         originalName: ctx.originalFilename,
         pages: ctx.uploadedPageKeys,
-        thumbnails: ctx.uploadedThumbnailKeys
+        thumbnails: ctx.uploadedThumbnailKeys,
+        cover: ctx.uploadedPageKeys[0],
+        coverThumbnail: ctx.uploadedThumbnailKeys[0]
       }).then(() => resolve(ctx))
     })
   })
