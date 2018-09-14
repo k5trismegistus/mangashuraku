@@ -6,6 +6,7 @@
   "scripts": {
     "build": "tsc",
     "start": "node dist/index.js",
+    "dev": "nodemon",
     "import": "node dist/tasks/import.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -28,6 +29,8 @@
     "@types/mongoose": "^5.2.6",
     "@types/rimraf": "^2.0.2",
     "@types/uuid": "^3.4.3",
+    "nodemon": "^1.18.4",
+    "ts-node": "^7.0.1",
     "typescript": "^3.0.1"
   },
   "dependencies": {
