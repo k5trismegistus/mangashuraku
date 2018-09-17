@@ -4,6 +4,7 @@ import { readdir, statSync, mkdir, PathLike, unlink } from 'fs'
 import { join, basename, extname } from 'path'
 import { mkdirPromise } from '../utils/mkdirPromise'
 import { uploadImage, uploadThumbnail } from '../utils/minioClient'
+import { serialPromises } from '../utils/serialPromises'
 import { genThumbnail } from '../utils/genThumbnail'
 import { File } from 'decompress'
 import { ImportContext } from '../models/importContext'
@@ -18,9 +19,9 @@ const importDir = 'import'
 const tmpDir = 'tmp'
 
 const extract = (ctx: ImportContext): Promise<ImportContext> => {
+  const workDir = join(tmpDir, ctx.originalFilename)
+  ctx.tmpDir = workDir
   return new Promise((resolve, reject) => {
-    const workDir = join(tmpDir, ctx.originalFilename)
-    ctx.tmpDir = workDir
 
     mkdirPromise(workDir)
       .then((tmpDirPath: string) => {
@@ -43,32 +44,42 @@ const extract = (ctx: ImportContext): Promise<ImportContext> => {
 const createThumbnails = (ctx: ImportContext): Promise<ImportContext> => {
   return new Promise((resolve, reject) => {
     mkdirPromise(join(ctx.tmpDir, 'thumbnail')).then((tmpDir: string) => {
-      Promise.all(
-        ctx.pages.map((page) => {
-          return new Promise((res, rej) => {
+      const thumbnailPaths: Array<string> = []
+
+      const promises = ctx.pages.map((page) => (
+        () => (
+          new Promise((res, rej) => {
             const filename = basename(page)
             genThumbnail(page, tmpDir, 320)
-              .then(() =>res(join(tmpDir, filename)))
+              .then(() => {
+                thumbnailPaths.push(join(tmpDir, filename))
+                res()
+              })
           })
+        )
+      ))
+
+      promises.reduce((m, p) => m.then(p), Promise.resolve({}))
+        .then(() => {
+          ctx.thumbnails = thumbnailPaths.sort()
+          resolve(ctx)
         })
-      ).then((thumbnailPaths: Array<string>) => {
-        ctx.thumbnails = thumbnailPaths.sort()
-        resolve(ctx)
-      })
-       .catch(reject)
+        .catch(reject)
     })
   })
 }
 
 const uploadImages = (ctx: ImportContext): Promise<ImportContext> => {
   return new Promise((resolve, reject) => {
-    ctx.pages.forEach((pagePath) => {
-      const key = `${ctx.archiveUUID}/${basename(pagePath)}`
 
-      uploadImage(key, pagePath)
-        .then((etag) => resolve(ctx))
-        .catch(reject)
+    const promises = ctx.pages.map((pagePath) => {
+      const key = `${ctx.archiveUUID}/${basename(pagePath)}`
+      return uploadImage(key, pagePath)
     })
+
+    serialPromises(promises)
+    .then(() => resolve(ctx))
+    .catch(reject)
   })
 }
 
@@ -93,7 +104,8 @@ const registerToDb = (ctx: ImportContext): Promise<ImportContext> => {
         pages: ctx.uploadedPageKeys,
         thumbnails: ctx.uploadedThumbnailKeys,
         cover: ctx.uploadedPageKeys[0],
-        coverThumbnail: ctx.uploadedThumbnailKeys[0]
+        coverThumbnail: ctx.uploadedThumbnailKeys[0],
+        createdAt: new Date
       }).then(() => resolve(ctx))
     })
   })
@@ -114,16 +126,22 @@ const importArchive = (zipFilePath) => {
   ctx.originalFilepath = zipFilePath
   ctx.archiveUUID  = uuid.v4()
 
-  extract(ctx)
-    .then(uploadImages)
-    .then(createThumbnails)
-    .then(uploadThumbnails)
-    .then(registerToDb)
-    .then(cleanUp)
-    .then((ctx: ImportContext) => console.log(`finished: ${basename(zipFilePath)}`))
-    .catch((err) => {
-      console.log(err)
+  return () => {
+    return new Promise((resolve, reject) => {
+      extract(ctx)
+        .then(uploadImages)
+        .then(createThumbnails)
+        .then(uploadThumbnails)
+        .then(registerToDb)
+        .then(cleanUp)
+        .then((ctx: ImportContext) => console.log(`finished: ${basename(zipFilePath)}`))
+        .then(() => resolve())
+        .catch((err) => {
+          console.log(err)
+          reject(err)
+        })
     })
+  }
 }
 
 // Import task body
@@ -135,5 +153,7 @@ readdir('import/', (err, files) => {
       file.endsWith('.zip') && statSync(join('import', file)).isFile()
     ))
 
-  zipList.forEach((zipFile) => importArchive(join(importDir, zipFile)))
+  zipList.map((zipFile) => importArchive(join(importDir, zipFile)))
+      .reduce((m, p) => (m.then(p)), Promise.resolve({}))
+      .then(() => console.log('Finished'))
 })

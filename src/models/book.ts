@@ -11,6 +11,7 @@ export interface IBookParameter {
   thumbnails: string[]
   cover: string
   coverThumbnail: string
+  createdAt: Date
 }
 
 export interface IBook extends IBookParameter {
@@ -29,6 +30,7 @@ export class Book implements IBook {
   thumbnails: string[]
   cover: string
   coverThumbnail: string
+  createdAt: Date
 
   constructor(params: Book) {
     this.id = params.id
