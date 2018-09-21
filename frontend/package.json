@@ -1,0 +1,25 @@
+{
+  "name": "mangashuraku-front",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Keigo Yamamoto",
+  "license": "ISC",
+  "dependencies": {
+    "connected-react-router": "^4.4.1",
+    "containers": "0.0.1",
+    "react": "^16.5.2",
+    "react-dom": "^16.5.2",
+    "react-redux": "^5.0.7",
+    "redux": "^4.0.0"
+  },
+  "devDependencies": {
+    "@types/react": "^16.4.14",
+    "@types/react-dom": "^16.0.7",
+    "@types/react-redux": "^6.0.9",
+    "@types/redux": "^3.6.0"
+  }
+}

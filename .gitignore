@@ -11,3 +11,6 @@ data
 
 /tmp/*
 !/tmp/.keep
+
+frontend/.cache
+frontend/dist
