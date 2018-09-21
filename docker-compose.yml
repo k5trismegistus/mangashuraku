@@ -11,7 +11,7 @@ services:
       - mongodb
       - minio
     working_dir: '/app'
-    command: 'npm run start'
+    command: 'npm run dev'
   mongodb:
     image: mongo:3.2-jessie
     ports:

@@ -101,6 +101,10 @@ const registerToDb = (ctx: ImportContext): Promise<ImportContext> => {
       insertBook(db, {
         archiveUUID: ctx.archiveUUID,
         originalName: ctx.originalFilename,
+        title: '',
+        authorIds: [],
+        organizationIds: [],
+        genreIds: [],
         pages: ctx.uploadedPageKeys,
         thumbnails: ctx.uploadedThumbnailKeys,
         cover: ctx.uploadedPageKeys[0],
