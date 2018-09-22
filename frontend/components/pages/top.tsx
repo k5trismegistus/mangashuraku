@@ -1,7 +1,20 @@
 import * as React from 'react'
+import { BookSummary } from '../../models';
 
-export const Top = () => (
+interface Props {
+  books: Array<BookSummary>
+}
+
+export const Top = ({
+  books
+}: Props) => (
   <div>
-    Hello world, This is Top
+    {
+      books.map(book => (
+        <li>
+          {book.originalName}
+        </li>
+      ))
+    }
   </div>
 )

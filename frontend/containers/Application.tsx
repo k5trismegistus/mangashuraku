@@ -1,9 +1,9 @@
 import * as React from 'react'
 
-import { Top } from '../components/pages/top'
+import TopContainer from './Top'
 
-export class Application extends React.Component {
+export default class ApplicationContainer extends React.Component {
   render() {
-    return (<Top />)
+    return (<TopContainer />)
   }
 }

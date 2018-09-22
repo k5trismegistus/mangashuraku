@@ -8,7 +8,7 @@ const bookApiRouter = (db: Db): Router => {
 
   router.get('/', (req, res) => {
     const books = indexBook(db, {}).then((books) => {
-      res.send({ books })
+      res.send({ data: { books }})
     })
   })
 
@@ -16,7 +16,7 @@ const bookApiRouter = (db: Db): Router => {
     const bookId = req.params.bookId
 
     const book = findBook(db, { bookId }).then((book) => {
-      res.send({ book })
+      res.send({ data: { book }})
     })
   })
 

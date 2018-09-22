@@ -9,17 +9,25 @@
   "author": "Keigo Yamamoto",
   "license": "ISC",
   "dependencies": {
+    "axios": "^0.18.0",
     "connected-react-router": "^4.4.1",
     "containers": "0.0.1",
     "react": "^16.5.2",
     "react-dom": "^16.5.2",
     "react-redux": "^5.0.7",
-    "redux": "^4.0.0"
+    "redux": "^4.0.0",
+    "redux-saga": "^0.16.0"
   },
   "devDependencies": {
+    "@types/axios": "^0.14.0",
     "@types/react": "^16.4.14",
     "@types/react-dom": "^16.0.7",
     "@types/react-redux": "^6.0.9",
-    "@types/redux": "^3.6.0"
+    "@types/redux": "^3.6.0",
+    "@types/redux-saga": "^0.10.5",
+    "babel-core": "^6.26.3",
+    "babel-plugin-transform-runtime": "^6.23.0",
+    "babel-runtime": "^6.26.0",
+    "redux-devtools-extension": "^2.13.5"
   }
 }
