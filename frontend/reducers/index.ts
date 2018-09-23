@@ -1,13 +1,19 @@
 import  { combineReducers } from 'redux';
 import {
+  BookStore,
+  bookReducer,
+} from './bookReducer'
+import {
   BooksStore,
   booksReducer
 } from './booksReducer'
 
 export interface RootStore {
+  currentBook: BookStore
   books: BooksStore
 }
 
 export const rootReducer = combineReducers({
-  books: booksReducer
+  currentBook: bookReducer,
+  books: booksReducer,
 })

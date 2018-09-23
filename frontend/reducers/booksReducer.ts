@@ -1,5 +1,7 @@
 import { Action } from 'redux'
-import { BookSummary } from '../models'
+import {
+  BookSummary,
+} from '../models'
 
 // Definition of Store
 
@@ -8,7 +10,7 @@ export interface BooksStore {
   books: Array<BookSummary>
 }
 
-export const initialBookStore = {
+export const initialBooksStore = {
   isFetching: false,
   books: [],
 }
@@ -54,8 +56,13 @@ export const fetchBookListFailed = (): FetchBookListFailed => ({
 
 // Definition of Reducer
 
-export const booksReducer = (state: BooksStore = initialBookStore, action: BooksActions) => {
+export const booksReducer = (state: BooksStore = initialBooksStore, action: BooksActions) => {
   switch (action.type) {
+    case ACTIONS.FETCH_BOOK_LIST:
+      return Object.assign({}, state, {
+        isFetching: true,
+        books: state.books
+      })
     case ACTIONS.FETCH_BOOK_LIST_SUCCEEDED:
       return Object.assign({}, state, {
         isFetching: false,

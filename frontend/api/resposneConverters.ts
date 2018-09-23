@@ -1,4 +1,7 @@
-import { BookSummary } from '../models/bookSummary'
+import {
+  BookSummary,
+  Book,
+} from '../models'
 
 export const convertBooksIndex = (response): Array<BookSummary> => {
   return response.data.data.books.map(e => {
@@ -7,5 +10,14 @@ export const convertBooksIndex = (response): Array<BookSummary> => {
       createdAt,
       ...e
     })
+  })
+}
+
+export const convertBook = (response): Book => {
+  const book = response.data.data.book
+  const createdAt = new Date(book.createdAt)
+  return new Book({
+    createdAt,
+    ...book
   })
 }

@@ -1,12 +1,14 @@
 import * as React from 'react'
 import Grid from '@material-ui/core/Grid'
-import { BookSummary } from '../../models';
+import { Book } from '../../models';
 
 import BookTile from '../Top/BookTile'
 import GridListTile from '@material-ui/core/GridListTile'
 
+const PageBasePath = 'http://localhost:9000/mangashuraku'
+
 interface Props {
-  books: Array<BookSummary>
+  book: Book
 }
 
 const styles = {
@@ -19,19 +21,20 @@ const styles = {
   },
 }
 
-export const Top = ({
-  books
+export const Viewer = ({
+  book
 }: Props) => (
   <div>
     <Grid container>
       {
-        books.map(book => (
-          <Grid item key={book._id}>
-            <BookTile
-              book={book}
-            />
-          </Grid>
-        ))
+        (() => {
+          console.log(book)
+          return book && book.pages ?
+            book.pages.map(page => (
+              <img src={`${PageBasePath}/${page}`} />
+            )) :
+            null
+        })()
       }
     </Grid>
   </div>
