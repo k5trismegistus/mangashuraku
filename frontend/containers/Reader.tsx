@@ -8,11 +8,12 @@ import {
 import { Book } from '../models';
 import { RootStore } from '../reducers';
 
-import { Viewer } from '../components/pages/Viewer'
+import { Reader } from '../components/pages/Reader'
 
 const mapStateToProps = (state: RootStore) => ({
   book: state.currentBook.book,
-  isFetching: state.books.isFetching
+  isFetching: state.currentBook.isFetching,
+  currentPageNumber: state.reader.currentPageNumber
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -24,10 +25,12 @@ const mapDispatchToProps = (dispatch) => ({
 type Props = {
   match: any
   book: Book
+  isFetching: Boolean
+  currentPageNumber: number
   fetchBook: (id: string) => void
 }
 
-class ViewerContainer extends React.Component<Props, {}> {
+class ReaderContainer extends React.Component<Props, {}> {
   constructor(params) {
     super(params)
     Object.assign(this, params)
@@ -39,10 +42,13 @@ class ViewerContainer extends React.Component<Props, {}> {
   }
 
   render() {
-    return (<Viewer
-      book={this.props.book}
-    />)
+    return this.props.book ?
+      <Reader
+        book={this.props.book}
+        currentPageNumber={this.props.currentPageNumber}
+      /> :
+      null
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ViewerContainer)
+export default connect(mapStateToProps, mapDispatchToProps)(ReaderContainer)
