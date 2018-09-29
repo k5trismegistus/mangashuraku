@@ -1,9 +1,14 @@
 import { Router } from 'express'
+import { Db } from 'mongodb'
 
-const healthApiRouter = Router()
+const healthApiRouter = (db: Db): Router => {
+  const router = Router()
 
-healthApiRouter.get('/', (req, res) => {
-  res.send({ message: 'OK' })
-})
+  router.get('/', (req, res) => {
+    res.send({ message: 'OK' })
+  })
+
+  return router
+}
 
 export { healthApiRouter }

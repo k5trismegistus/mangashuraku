@@ -63,7 +63,7 @@ export const bookReducer = (state: BookStore = initialBookStore, action: BookAct
     case ACTIONS.FETCH_BOOK:
       return Object.assign({}, state, {
         isFetching: true,
-        book: state.book
+        book: null
       })
     case ACTIONS.FETCH_BOOK_SUCCEEDED:
       return Object.assign({}, state, {

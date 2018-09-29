@@ -1,0 +1,19 @@
+.pagesContainer {
+  display: flex;
+}
+
+.backButton {
+  position: absolute;
+  left: 0px;
+  height: 100%;
+  width: 30%;
+  z-index: 1000;
+}
+
+.forwardButton {
+  position: absolute;
+  right: 0px;
+  height: 100%;
+  width: 30%;
+  z-index: 1000;
+}
