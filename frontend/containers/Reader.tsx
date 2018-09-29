@@ -12,22 +12,29 @@ import { Book } from '../models';
 import { RootStore } from '../reducers';
 
 import { SinglePageReader } from '../components/pages/SinglePageReader'
+import { DoublePageReader } from '../components/pages/DoublePageReader'
 
 type Props = {
   match: any
   book: Book
   isFetching: Boolean
   currentPageNumber: number
+  leftToRight: Boolean
+  singleReader: Boolean
   fetchBook: (id: string) => void
   singlePageBack: () => void
   singlePageForward: () => void
+  doublePageBack: () => void
+  doublePageForward: () => void
   jumpPage: () => void
 }
 
 const mapStateToProps = (state: RootStore) => ({
   book: state.currentBook.book,
   isFetching: state.currentBook.isFetching,
-  currentPageNumber: state.reader.currentPageNumber
+  currentPageNumber: state.reader.currentPageNumber,
+  leftToRight: state.reader.leftToRight,
+  singleReader: state.reader.singlePage,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -48,6 +55,14 @@ const mergeProps = (state, { dispatch, ...dispatchProps }, ownProps: Props) => (
   singlePageForward() {
     if (state.currentPageNumber === state.book.pages.length - 1) { return }
     dispatch(updateCurrentPageNumber(state.currentPageNumber + 1))
+  },
+  doublePageBack() {
+    if (state.currentPageNumber === 0) { return }
+    dispatch(updateCurrentPageNumber(state.currentPageNumber - 2))
+  },
+  doublePageForward() {
+    if (state.currentPageNumber === state.book.pages.length - 1) { return }
+    dispatch(updateCurrentPageNumber(state.currentPageNumber + 2))
   },
   jumpPage(pageNumber: number) {
     if (pageNumber < 0 || pageNumber > state.currentPageNumber - 1) { return }
@@ -72,16 +87,25 @@ class ReaderContainer extends React.Component<Props, {}> {
       return null
     }
 
-    const reader = true ?
+    const reader = this.props.singleReader ?
       <SinglePageReader
         book={this.props.book}
         currentPageNumber={this.props.currentPageNumber}
+        leftToRight={this.props.leftToRight}
         singlePageBack={this.props.singlePageBack}
         singlePageForward={this.props.singlePageForward}
         jumpPage={this.props.jumpPage}
       /> :
-      null // @TODO Only single page reader for now...
-
+      <DoublePageReader
+        book={this.props.book}
+        currentPageNumber={this.props.currentPageNumber}
+        leftToRight={this.props.leftToRight}
+        singlePageBack={this.props.singlePageBack}
+        singlePageForward={this.props.singlePageForward}
+        doublePageBack={this.props.doublePageBack}
+        doublePageForward={this.props.doublePageForward}
+        jumpPage={this.props.jumpPage}
+      />
 
     return (
       <div>

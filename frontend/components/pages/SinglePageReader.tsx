@@ -1,12 +1,9 @@
 import * as React from 'react'
-import Grid from '@material-ui/core/Grid'
 import { Book } from '../../models'
 
 import { BookPage } from '../reader/BookPage';
+import { getBookPageComponent } from '../../helpers'
 
-import IconButton from '@material-ui/core/IconButton'
-import NavigateBeforeIcon from '@material-ui/icons/NavigateBefore'
-import NavigateNextIcon from '@material-ui/icons/NavigateNext'
 import styles from './SinglePageReader.css'
 
 const PageBasePath = 'http://localhost:9000/mangashuraku'
@@ -14,6 +11,7 @@ const PageBasePath = 'http://localhost:9000/mangashuraku'
 interface Props {
   book: Book
   currentPageNumber: number
+  leftToRight: Boolean
   singlePageBack: () => void
   singlePageForward: () => void
   jumpPage: () => void
@@ -31,21 +29,9 @@ export class SinglePageReader extends React.Component<Props, State> {
   constructor(props: Props, state: State) {
     super(props, state)
 
-    const prevPage = (props.currentPageNumber > 0) ?
-      <BookPage
-        imgSrc={`${PageBasePath}/${props.book.pages[props.currentPageNumber - 1]}`}
-      /> :
-      null
-
-    const currentPage = <BookPage
-      imgSrc={`${PageBasePath}/${props.book.pages[props.currentPageNumber]}`}
-    />
-
-    const nextPage = (props.currentPageNumber < props.book.pages.length - 1) ?
-      <BookPage
-        imgSrc={`${PageBasePath}/${props.book.pages[props.currentPageNumber + 1]}`}
-      /> :
-      null
+    const prevPage = getBookPageComponent(props.book, props.currentPageNumber - 1)
+    const currentPage = getBookPageComponent(props.book, props.currentPageNumber)
+    const nextPage = getBookPageComponent(props.book, props.currentPageNumber + 1)
 
     const currentPageNumber = props.currentPageNumber
 
@@ -60,11 +46,7 @@ export class SinglePageReader extends React.Component<Props, State> {
   static getDerivedStateFromProps(nextProps: Props, currentState: State) {
     // Forward page
     if (nextProps.currentPageNumber - currentState.currentPageNumber === 1) {
-      const nextPage = (nextProps.currentPageNumber < nextProps.book.pages.length - 1) ?
-        <BookPage
-          imgSrc={`${PageBasePath}/${nextProps.book.pages[nextProps.currentPageNumber + 1]}`}
-        /> :
-        null
+      const nextPage = getBookPageComponent(nextProps.book, nextProps.currentPageNumber + 1)
 
       return {
         prevPage: currentState.currentPage,
@@ -76,11 +58,7 @@ export class SinglePageReader extends React.Component<Props, State> {
 
     // Back page
     if (nextProps.currentPageNumber - currentState.currentPageNumber === -1) {
-      const prevPage = (nextProps.currentPageNumber > 0) ?
-        <BookPage
-          imgSrc={`${PageBasePath}/${nextProps.book.pages[nextProps.currentPageNumber - 1]}`}
-        /> :
-        null
+      const prevPage = getBookPageComponent(nextProps.book, nextProps.currentPageNumber - 1)
 
       return {
         prevPage: prevPage,
@@ -91,22 +69,9 @@ export class SinglePageReader extends React.Component<Props, State> {
     }
 
     // Jump page
-
-    const prevPage = (nextProps.currentPageNumber > 0) ?
-      <BookPage
-        imgSrc={`${PageBasePath}/${nextProps.book.pages[nextProps.currentPageNumber - 1]}`}
-      /> :
-      null
-
-    const currentPage = <BookPage
-      imgSrc={`${PageBasePath}/${nextProps.book.pages[nextProps.currentPageNumber]}`}
-    />
-
-    const nextPage = (nextProps.currentPageNumber < nextProps.book.pages.length - 1) ?
-      <BookPage
-        imgSrc={`${PageBasePath}/${nextProps.book.pages[nextProps.currentPageNumber + 1]}`}
-      /> :
-      null
+    const prevPage = getBookPageComponent(nextProps.book, nextProps.currentPageNumber - 1)
+    const currentPage = getBookPageComponent(nextProps.book, nextProps.currentPageNumber)
+    const nextPage = getBookPageComponent(nextProps.book, nextProps.currentPageNumber + 1)
 
     return {
       prevPage: prevPage,
@@ -117,16 +82,24 @@ export class SinglePageReader extends React.Component<Props, State> {
   }
 
   render() {
+    const leftAction = this.props.leftToRight ?
+      this.props.singlePageBack :
+      this.props.singlePageForward
+
+    const rightAction = this.props.leftToRight ?
+      this.props.singlePageForward :
+      this.props.singlePageBack
+
     return (
       <div>
         <div
-          onClick={this.props.singlePageBack}
+          onClick={leftAction}
           className={styles.backButton}
         >
           {/* <NavigateBeforeIcon /> */}
         </div>
         <div
-          onClick={this.props.singlePageForward}
+          onClick={rightAction}
           className={styles.forwardButton}
         >
           {/* <NavigateNextIcon /> */}
