@@ -1,0 +1,9 @@
+.backButton {
+  position: absolute;
+  left: 0px;
+}
+
+.forwardButton {
+  position: absolute;
+  right: 0px;
+}

@@ -4,11 +4,25 @@ import { connect } from 'react-redux'
 import {
   fetchBook
 } from '../reducers/bookReducer'
+import {
+  updateCurrentPageNumber
+} from '../reducers/readerReducer'
 
 import { Book } from '../models';
 import { RootStore } from '../reducers';
 
-import { Reader } from '../components/pages/Reader'
+import { SinglePageReader } from '../components/pages/SinglePageReader'
+
+type Props = {
+  match: any
+  book: Book
+  isFetching: Boolean
+  currentPageNumber: number
+  fetchBook: (id: string) => void
+  singlePageBack: () => void
+  singlePageForward: () => void
+  jumpPage: () => void
+}
 
 const mapStateToProps = (state: RootStore) => ({
   book: state.currentBook.book,
@@ -17,18 +31,26 @@ const mapStateToProps = (state: RootStore) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
+  dispatch,
   fetchBook(id: string) {
     dispatch(fetchBook(id))
   }
 })
 
-type Props = {
-  match: any
-  book: Book
-  isFetching: Boolean
-  currentPageNumber: number
-  fetchBook: (id: string) => void
-}
+const mergeProps = (state, { dispatch, ...dispatchProps }, ownProps: Props) => ({
+  ...state,
+  ...dispatchProps,
+  ...ownProps,
+  singlePageBack() {
+    dispatch(updateCurrentPageNumber(state.currentPageNumber - 1))
+  },
+  singlePageForward() {
+    dispatch(updateCurrentPageNumber(state.currentPageNumber + 1))
+  },
+  jumpPage(pageNumber: number) {
+    dispatch(updateCurrentPageNumber(pageNumber))
+  }
+})
 
 class ReaderContainer extends React.Component<Props, {}> {
   constructor(params) {
@@ -42,13 +64,27 @@ class ReaderContainer extends React.Component<Props, {}> {
   }
 
   render() {
-    return this.props.book ?
-      <Reader
+    if (!this.props.book) {
+      return null
+    }
+
+    const reader = true ?
+      <SinglePageReader
         book={this.props.book}
         currentPageNumber={this.props.currentPageNumber}
+        singlePageBack={this.props.singlePageBack}
+        singlePageForward={this.props.singlePageForward}
+        jumpPage={this.props.jumpPage}
       /> :
-      null
+      null // @TODO Only single page reader for now...
+
+
+    return (
+      <div>
+        {reader}
+      </div>
+    )
   }
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ReaderContainer)
+export default connect(mapStateToProps, mapDispatchToProps, mergeProps)(ReaderContainer)
