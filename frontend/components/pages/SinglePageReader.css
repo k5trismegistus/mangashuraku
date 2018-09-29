@@ -1,9 +1,13 @@
 .backButton {
   position: absolute;
   left: 0px;
+  height: 100%;
+  width: 30%;
 }
 
 .forwardButton {
   position: absolute;
   right: 0px;
+  height: 100%;
+  width: 30%;
 }

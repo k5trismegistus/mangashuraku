@@ -42,12 +42,15 @@ const mergeProps = (state, { dispatch, ...dispatchProps }, ownProps: Props) => (
   ...dispatchProps,
   ...ownProps,
   singlePageBack() {
+    if (state.currentPageNumber === 0) { return }
     dispatch(updateCurrentPageNumber(state.currentPageNumber - 1))
   },
   singlePageForward() {
+    if (state.currentPageNumber === state.book.pages.length - 1) { return }
     dispatch(updateCurrentPageNumber(state.currentPageNumber + 1))
   },
   jumpPage(pageNumber: number) {
+    if (pageNumber < 0 || pageNumber > state.currentPageNumber - 1) { return }
     dispatch(updateCurrentPageNumber(pageNumber))
   }
 })
@@ -59,6 +62,7 @@ class ReaderContainer extends React.Component<Props, {}> {
   }
 
   componentWillMount() {
+    console.log(this.props.match)
     const bookId = this.props.match.params.bookId
     this.props.fetchBook(bookId)
   }

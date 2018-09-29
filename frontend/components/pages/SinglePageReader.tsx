@@ -119,17 +119,17 @@ export class SinglePageReader extends React.Component<Props, State> {
   render() {
     return (
       <div>
-        <div>
-          <NavigateBeforeIcon
-            onClick={this.props.singlePageBack}
-            className={styles.backButton}
-            />
+        <div
+          onClick={this.props.singlePageBack}
+          className={styles.backButton}
+        >
+          {/* <NavigateBeforeIcon /> */}
         </div>
-        <div>
-          <NavigateNextIcon
-            onClick={this.props.singlePageForward}
-            className={styles.forwardButton}
-          />
+        <div
+          onClick={this.props.singlePageForward}
+          className={styles.forwardButton}
+        >
+          {/* <NavigateNextIcon /> */}
         </div>
         {this.state.currentPage}
 
