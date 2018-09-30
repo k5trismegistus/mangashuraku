@@ -1,6 +1,5 @@
 import { Db, ObjectId } from "mongodb";
 import { IBookParameter, Book } from "../models/book";
-import { String } from "aws-sdk/clients/cloudwatchevents";
 import { BookIndexFields } from '../models/book'
 
 
@@ -23,7 +22,7 @@ export const insertBook = (db: Db, params: IBookParameter): Promise<Book> => {
 }
 
 export interface IndexBookParams {
-  search?: String
+  search?: string
   orderBy?: 'createdAt'
   asc?: boolean
   limit?: number

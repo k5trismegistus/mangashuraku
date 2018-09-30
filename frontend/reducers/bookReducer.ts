@@ -30,7 +30,7 @@ export type BookActions =
 
 interface FetchBook extends Action {
   type: ACTIONS.FETCH_BOOK
-  id: String
+  id: string
 }
 
 export const fetchBook = (id: string): FetchBook => ({

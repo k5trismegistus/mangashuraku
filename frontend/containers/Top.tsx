@@ -36,7 +36,6 @@ class TopContainer extends React.Component<Props, {}> {
   }
 
   render() {
-    console.log(this.props)
     return (<Top
       books={this.props.books}
     />)

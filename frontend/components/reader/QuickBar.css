@@ -1,0 +1,29 @@
+.quickBarContainer {
+  width: 100%;
+}
+
+.quickBar {
+  display: flex;
+  overflow-x: scroll;
+  background-color: white;
+}
+
+.thumbnailContainer {
+  position: relative;
+  height: 20rem;
+  min-width: 16rem;
+  cursor: pointer;
+}
+
+.img {
+  height: 100%;
+  width: 100%;
+}
+
+.pageNumber {
+  position: absolute;
+  font-size: 3rem;
+  font-weight: bold;
+  bottom: 0.5rem;
+  right: 0.5rem;
+}

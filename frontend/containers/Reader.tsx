@@ -5,7 +5,11 @@ import {
   fetchBook
 } from '../reducers/bookReducer'
 import {
-  updateCurrentPageNumber
+  updateCurrentPageNumber,
+  toggleReaderType,
+  toggleQuickBar,
+  toggleMenu,
+  toggleDirection,
 } from '../reducers/readerReducer'
 
 import { Book } from '../models';
@@ -17,16 +21,22 @@ import { DoublePageReader } from '../components/pages/DoublePageReader'
 type Props = {
   match: any
   book: Book
-  isFetching: Boolean
+  isFetching: boolean
   currentPageNumber: number
-  leftToRight: Boolean
-  singleReader: Boolean
+  leftToRight: boolean
+  singleReader: boolean
+  showingQuickBar: boolean
+  showingMenu: boolean
   fetchBook: (id: string) => void
   singlePageBack: () => void
   singlePageForward: () => void
   doublePageBack: () => void
   doublePageForward: () => void
   jumpPage: () => void
+  toggleReaderType: () => void
+  toggleQuickBar: () => void
+  toggleMenu: () => void
+  toggleDirection: () => void
 }
 
 const mapStateToProps = (state: RootStore) => ({
@@ -35,13 +45,27 @@ const mapStateToProps = (state: RootStore) => ({
   currentPageNumber: state.reader.currentPageNumber,
   leftToRight: state.reader.leftToRight,
   singleReader: state.reader.singlePage,
+  showingQuickBar: state.reader.showingQuickBar,
+  showingMenu: state.reader.showingMenu
 })
 
 const mapDispatchToProps = (dispatch) => ({
   dispatch,
   fetchBook(id: string) {
     dispatch(fetchBook(id))
-  }
+  },
+  toggleMenu() {
+    dispatch(toggleMenu())
+  },
+  toggleReaderType() {
+    dispatch(toggleReaderType())
+  },
+  toggleQuickBar() {
+    dispatch(toggleQuickBar())
+  },
+  toggleDirection() {
+    dispatch(toggleDirection())
+  },
 })
 
 const mergeProps = (state, { dispatch, ...dispatchProps }, ownProps: Props) => ({
@@ -65,9 +89,9 @@ const mergeProps = (state, { dispatch, ...dispatchProps }, ownProps: Props) => (
     dispatch(updateCurrentPageNumber(state.currentPageNumber + 2))
   },
   jumpPage(pageNumber: number) {
-    if (pageNumber < 0 || pageNumber > state.currentPageNumber - 1) { return }
+    if (pageNumber < 0 || pageNumber > state.book.pages.length - 1) { return }
     dispatch(updateCurrentPageNumber(pageNumber))
-  }
+  },
 })
 
 class ReaderContainer extends React.Component<Props, {}> {
@@ -77,7 +101,6 @@ class ReaderContainer extends React.Component<Props, {}> {
   }
 
   componentWillMount() {
-    console.log(this.props.match)
     const bookId = this.props.match.params.bookId
     this.props.fetchBook(bookId)
   }
@@ -92,19 +115,31 @@ class ReaderContainer extends React.Component<Props, {}> {
         book={this.props.book}
         currentPageNumber={this.props.currentPageNumber}
         leftToRight={this.props.leftToRight}
+        showingQuickBar={this.props.showingQuickBar}
+        showingMenu={this.props.showingMenu}
         singlePageBack={this.props.singlePageBack}
         singlePageForward={this.props.singlePageForward}
         jumpPage={this.props.jumpPage}
+        toggleQuickBar={this.props.toggleQuickBar}
+        toggleMenu={this.props.toggleMenu}
+        toggleReaderType={this.props.toggleReaderType}
+        toggleDirection={this.props.toggleDirection}
       /> :
       <DoublePageReader
         book={this.props.book}
         currentPageNumber={this.props.currentPageNumber}
         leftToRight={this.props.leftToRight}
+        showingQuickBar={this.props.showingQuickBar}
+        showingMenu={this.props.showingMenu}
         singlePageBack={this.props.singlePageBack}
         singlePageForward={this.props.singlePageForward}
         doublePageBack={this.props.doublePageBack}
         doublePageForward={this.props.doublePageForward}
         jumpPage={this.props.jumpPage}
+        toggleQuickBar={this.props.toggleQuickBar}
+        toggleMenu={this.props.toggleMenu}
+        toggleReaderType={this.props.toggleReaderType}
+        toggleDirection={this.props.toggleDirection}
       />
 
     return (
