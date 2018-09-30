@@ -1,7 +1,9 @@
 import * as React from 'react'
+import { Link } from 'react-router-dom'
 import List from '@material-ui/core/List'
 import ListItem from '@material-ui/core/ListItem'
 import ListItemIcon from '@material-ui/core/ListItemIcon'
+import ArrowUpwardIcon from '@material-ui/icons/ArrowUpward'
 import ImportContactsIcon from '@material-ui/icons/ImportContacts'
 import CompareArrowsIcon from '@material-ui/icons/CompareArrows'
 import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
@@ -13,12 +15,14 @@ interface Props {
   toggleMenu: () => void
   toggleReaderType: () => void
   toggleDirection: () => void
+  backToIndex: () => void
 }
 
 const ReaderMenu = ({
   toggleMenu,
   toggleReaderType,
   toggleDirection,
+  backToIndex,
 }: Props) => (
   <div>
     <Grid
@@ -28,6 +32,20 @@ const ReaderMenu = ({
       <Grid item xs={3} />
       <Grid item xs={6}>
         <List className={styles.menuList}>
+          <ListItem
+            button
+            className={styles.menuItem}
+            onClick={backToIndex}
+          >
+            <ListItemIcon>
+              <ArrowUpwardIcon className={styles.menuIcon} />
+            </ListItemIcon>
+            <span
+              className={styles.listItemText}
+              >
+              Back to Library
+            </span>
+          </ListItem>
           <ListItem
             button
             onClick={toggleReaderType}

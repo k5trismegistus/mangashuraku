@@ -26,6 +26,7 @@ export enum ACTIONS {
   TOGGLE_READER_TYPE = 'TOGGLE_READER_TYPE',
   TOGGLE_QUICKBAR = 'TOGGLE_QUICKBAR',
   TOGGLE_MENU = 'TOGGLE_MENU',
+  CLEAR_STATE = 'CLEAR_STATE',
 }
 
 export type ReaderActions =
@@ -33,7 +34,8 @@ export type ReaderActions =
   ToggleDirection |
   ToggleReaderType |
   ToggleQuickBar |
-  ToggleMenu
+  ToggleMenu |
+  ClearState
 
 interface UpdateCurrentPageNumber extends Action {
   type: ACTIONS.UPDATE_CURRENT_PAGE_NUMBER
@@ -77,6 +79,14 @@ export const toggleMenu = (): ToggleMenu => ({
   type: ACTIONS.TOGGLE_MENU
 })
 
+interface ClearState extends Action {
+  type: ACTIONS.CLEAR_STATE
+}
+
+export const clearState = (): ClearState => ({
+  type: ACTIONS.CLEAR_STATE
+})
+
 // Definition of Reducer
 
 export const readerReducer = (state: ReaderStore = initialReaderStore, action: any) => {
@@ -101,6 +111,8 @@ export const readerReducer = (state: ReaderStore = initialReaderStore, action: a
         return Object.assign({}, state, {
           showingMenu: !state.showingMenu
         })
+      case ACTIONS.CLEAR_STATE:
+        return initialReaderStore
   }
   return state
 }

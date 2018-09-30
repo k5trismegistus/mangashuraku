@@ -2,34 +2,31 @@ import * as React from 'react'
 import Grid from '@material-ui/core/Grid'
 import { BookSummary } from '../../models';
 
+import { Link } from 'react-router-dom'
 import BookTile from '../Top/BookTile'
-import GridListTile from '@material-ui/core/GridListTile'
 
 interface Props {
   books: Array<BookSummary>
-}
-
-const styles = {
-  card: {
-    width: 320,
-  },
-  cover: {
-    height: 480,
-    width: 320
-  },
+  openBook: (string) => void
 }
 
 export const Top = ({
-  books
+  books,
+  openBook,
 }: Props) => (
   <div>
     <Grid container>
       {
         books.map(book => (
-          <Grid item key={book._id}>
-            <BookTile
-              book={book}
-            />
+          <Grid
+            item
+            key={book._id}
+          >
+            <Link to={`/books/${book._id}`}>
+              <BookTile
+                book={book}
+              />
+            </Link>
           </Grid>
         ))
       }

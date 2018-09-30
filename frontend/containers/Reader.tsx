@@ -10,13 +10,16 @@ import {
   toggleQuickBar,
   toggleMenu,
   toggleDirection,
+  clearState,
 } from '../reducers/readerReducer'
+import { push } from 'connected-react-router'
 
 import { Book } from '../models';
 import { RootStore } from '../reducers';
 
 import { SinglePageReader } from '../components/pages/SinglePageReader'
 import { DoublePageReader } from '../components/pages/DoublePageReader'
+import { ReaderMenu } from '../components/reader'
 
 type Props = {
   match: any
@@ -37,6 +40,8 @@ type Props = {
   toggleQuickBar: () => void
   toggleMenu: () => void
   toggleDirection: () => void
+  backToIndex: () => void
+  clearReaderState: () => void
 }
 
 const mapStateToProps = (state: RootStore) => ({
@@ -65,6 +70,12 @@ const mapDispatchToProps = (dispatch) => ({
   },
   toggleDirection() {
     dispatch(toggleDirection())
+  },
+  backToIndex() {
+    dispatch(push('/'))
+  },
+  clearReaderState() {
+    dispatch(clearState())
   },
 })
 
@@ -100,9 +111,13 @@ class ReaderContainer extends React.Component<Props, {}> {
     Object.assign(this, params)
   }
 
-  componentWillMount() {
+  componentDidMount() {
     const bookId = this.props.match.params.bookId
     this.props.fetchBook(bookId)
+  }
+
+  componentWillUnmount() {
+    this.props.clearReaderState()
   }
 
   render() {
@@ -122,8 +137,6 @@ class ReaderContainer extends React.Component<Props, {}> {
         jumpPage={this.props.jumpPage}
         toggleQuickBar={this.props.toggleQuickBar}
         toggleMenu={this.props.toggleMenu}
-        toggleReaderType={this.props.toggleReaderType}
-        toggleDirection={this.props.toggleDirection}
       /> :
       <DoublePageReader
         book={this.props.book}
@@ -138,13 +151,22 @@ class ReaderContainer extends React.Component<Props, {}> {
         jumpPage={this.props.jumpPage}
         toggleQuickBar={this.props.toggleQuickBar}
         toggleMenu={this.props.toggleMenu}
-        toggleReaderType={this.props.toggleReaderType}
-        toggleDirection={this.props.toggleDirection}
       />
 
     return (
       <div>
         {reader}
+
+        {
+          this.props.showingMenu ?
+            <ReaderMenu
+              toggleMenu={this.props.toggleMenu}
+              toggleReaderType={this.props.toggleReaderType}
+              toggleDirection={this.props.toggleDirection}
+              backToIndex={this.props.backToIndex}
+            /> :
+            null
+        }
       </div>
     )
   }

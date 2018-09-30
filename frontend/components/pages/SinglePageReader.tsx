@@ -20,8 +20,6 @@ interface Props {
   jumpPage: () => void
   toggleQuickBar: () => void
   toggleMenu: () => void
-  toggleReaderType: () => void
-  toggleDirection: () => void
 }
 
 interface State {
@@ -126,17 +124,6 @@ export class SinglePageReader extends React.Component<Props, State> {
             leftToRight={this.props.leftToRight}
             currentPageNumber={this.props.currentPageNumber}
             jumpPage={this.props.jumpPage}
-          />
-        </div>
-
-        <div
-          className={styles.readerMenu}
-          style={this.props.showingMenu ? null: {display: 'none'}}
-        >
-          <ReaderMenu
-            toggleMenu={this.props.toggleMenu}
-            toggleReaderType={this.props.toggleReaderType}
-            toggleDirection={this.props.toggleDirection}
           />
         </div>
 
