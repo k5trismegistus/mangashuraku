@@ -9,6 +9,6 @@ export const BookPage = ({
   imgSrc
 }: Props) => (
   <div className={styles.page}>
-    <img src={imgSrc} />>
+    <img src={imgSrc} />
   </div>
 )

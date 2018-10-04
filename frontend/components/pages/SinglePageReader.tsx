@@ -1,20 +1,25 @@
 import * as React from 'react'
 import { Book } from '../../models'
 
-import { BookPage } from '../reader/BookPage';
+import {
+  QuickBar,
+  ReaderMenu,
+} from '../reader'
 import { getBookPageComponent } from '../../helpers'
 
 import styles from './SinglePageReader.css'
 
-const PageBasePath = 'http://localhost:9000/mangashuraku'
-
 interface Props {
   book: Book
   currentPageNumber: number
-  leftToRight: Boolean
+  leftToRight: boolean
+  showingQuickBar: boolean
+  showingMenu: boolean
   singlePageBack: () => void
   singlePageForward: () => void
   jumpPage: () => void
+  toggleQuickBar: () => void
+  toggleMenu: () => void
 }
 
 interface State {
@@ -93,23 +98,40 @@ export class SinglePageReader extends React.Component<Props, State> {
     return (
       <div>
         <div
+          onClick={this.props.toggleMenu}
+          className={styles.topButton}
+        />
+        <div
           onClick={leftAction}
-          className={styles.backButton}
-        >
-          {/* <NavigateBeforeIcon /> */}
-        </div>
+          className={styles.leftButton}
+        />
+        <div
+          onClick={this.props.toggleQuickBar}
+          className={styles.centerButton}
+        />
         <div
           onClick={rightAction}
-          className={styles.forwardButton}
-        >
-          {/* <NavigateNextIcon /> */}
-        </div>
+          className={styles.rightButton}
+        />
         {this.state.currentPage}
 
+        <div
+          className={styles.quickBar}
+          style={this.props.showingQuickBar ? null: {display: 'none'}}
+        >
+          <QuickBar
+            thumbnails={this.props.book.thumbnails}
+            leftToRight={this.props.leftToRight}
+            currentPageNumber={this.props.currentPageNumber}
+            jumpPage={this.props.jumpPage}
+          />
+        </div>
+
+        {/* prefetch */}
         <div style={{ display: 'none' }}>
           {this.state.prevPage}
           {this.state.nextPage}
-        </div>>
+        </div>
       </div>
     )
   }
