@@ -10,10 +10,13 @@ import {
 
 function* doFetchBookList(action) {
   try {
-     const books = yield call(booksIndex, {});
-     yield put(fetchBookListSucceeded(books));
+    const params = {}
+    if (action.page) params['page'] = action.page
+    if (action.query) params['q'] = action.query
+    const result = yield call(booksIndex, params)
+    yield put(fetchBookListSucceeded(result.books, result.total))
   } catch (e) {
-     yield put(fetchBookListFailed());
+    yield put(fetchBookListFailed())
   }
 }
 
