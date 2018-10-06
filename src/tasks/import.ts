@@ -141,7 +141,7 @@ const importArchive = (zipFilePath) => {
         .then((ctx: ImportContext) => console.log(`finished: ${basename(zipFilePath)}`))
         .then(() => resolve())
         .catch((err) => {
-          console.log(err)
+          console.error(err)
           reject(err)
         })
     })

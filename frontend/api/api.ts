@@ -7,11 +7,7 @@ import {
 
 const BASE_PATH = 'http://localhost:3001/api'
 
-export interface BookIndexParams {
-
-}
-
-export const booksIndex = (params: BookIndexParams) => {
+export const booksIndex = (params) => {
   return axios.get(`${BASE_PATH}/books/`, { params })
        .then((response) => {
           return convertBooksIndex(response)

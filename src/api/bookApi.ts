@@ -1,23 +1,28 @@
 import { Router } from 'express'
 import { Db } from 'mongodb'
-
 import { indexBook, findBook } from '../repository/books_repository';
+
+const PER_PAGE = 20
 
 const bookApiRouter = (db: Db): Router => {
   const router = Router()
 
-  router.get('/', (req, res) => {
-    const books = indexBook(db, {}).then((books) => {
-      res.send({ data: { books }})
-    })
+  router.get('/', async (req, res) => {
+    const params = req.query
+    const queryParams = {
+      search: (params.q ? params.q : null),
+      limit: PER_PAGE,
+      offset: PER_PAGE * (params.page ? params.page : 0)
+    }
+    const result = await indexBook(db, queryParams)
+    res.send(result)
   })
 
-  router.get('/:bookId', (req, res) => {
+  router.get('/:bookId', async (req, res) => {
     const bookId = req.params.bookId
 
-    const book = findBook(db, { bookId }).then((book) => {
-      res.send({ data: { book }})
-    })
+    const result = await findBook(db, { bookId })
+    res.send(result)
   })
 
   return router

@@ -10,10 +10,10 @@ import {
 
 function* doFetchBook(action) {
   try {
-    const b = yield call(book, action.id);
-    yield put(fetchBookSucceeded(b));
+    const response = yield call(book, action.id);
+    yield put(fetchBookSucceeded(response));
   } catch (e) {
-    console.log(e)
+    console.error(e)
     yield put(fetchBookFailed());
   }
 }

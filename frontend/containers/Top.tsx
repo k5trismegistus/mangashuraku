@@ -11,18 +11,24 @@ import { RootStore } from '../reducers';
 
 const mapStateToProps = (state: RootStore) => ({
   books: state.books.books,
+  total: state.books.total,
+  page: state.books.page,
+  query: state.books.query,
   isFetching: state.books.isFetching
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchBookList() {
-    dispatch(fetchBookList())
+  fetchBookList(query, page) {
+    dispatch(fetchBookList(query, page))
   }
 })
 
 type Props = {
   books: Array<BookSummary>
-  fetchBookList: () => void
+  total: number
+  page: number
+  query: string
+  fetchBookList: (page: number, query: string) => void
 }
 
 class TopContainer extends React.Component<Props, {}> {
@@ -32,12 +38,16 @@ class TopContainer extends React.Component<Props, {}> {
   }
 
   componentWillMount() {
-    this.props.fetchBookList()
+    this.props.fetchBookList(0, '')
   }
 
   render() {
     return (<Top
       books={this.props.books}
+      total={this.props.total}
+      query={this.props.query}
+      page={this.props.page}
+      fetchBookList={this.props.fetchBookList}
     />)
   }
 }
