@@ -2,7 +2,8 @@ import * as React from 'react'
 import { connect } from 'react-redux'
 
 import {
-  fetchBook
+  fetchBook,
+  deleteBook,
 } from '../reducers/bookReducer'
 import {
   updateCurrentPageNumber,
@@ -42,6 +43,7 @@ type Props = {
   toggleDirection: () => void
   backToIndex: () => void
   clearReaderState: () => void
+  deleteBook: () => void
 }
 
 const mapStateToProps = (state: RootStore) => ({
@@ -103,6 +105,9 @@ const mergeProps = (state, { dispatch, ...dispatchProps }, ownProps: Props) => (
     if (pageNumber < 0 || pageNumber > state.book.pages.length - 1) { return }
     dispatch(updateCurrentPageNumber(pageNumber))
   },
+  deleteBook() {
+    dispatch(deleteBook(state.book._id))
+  }
 })
 
 class ReaderContainer extends React.Component<Props, {}> {
@@ -164,6 +169,7 @@ class ReaderContainer extends React.Component<Props, {}> {
               toggleReaderType={this.props.toggleReaderType}
               toggleDirection={this.props.toggleDirection}
               backToIndex={this.props.backToIndex}
+              deleteBook={this.props.deleteBook}
             /> :
             null
         }

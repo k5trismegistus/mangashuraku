@@ -21,12 +21,18 @@ export enum ACTIONS {
   FETCH_BOOK = 'FETCH_BOOK',
   FETCH_BOOK_SUCCEEDED = 'FETCH_BOOK_SUCCEEDED',
   FETCH_BOOK_FAILED = 'FETCH_BOOK_FAILED',
+  DELETE_BOOK = 'DELETE_BOOK',
+  DELETE_BOOK_SUCCEEDED = 'DELETE_BOOK_SUCCEEDED',
+  DELETE_BOOK_FAILED = 'DELETE_BOOK_FAILED',
 }
 
 export type BookActions =
   FetchBook |
   FetchBookSucceeded |
-  FetchBookFailed
+  FetchBookFailed |
+  DeleteBook |
+  DeleteBookSucceeded |
+  DeleteBookFailed
 
 interface FetchBook extends Action {
   type: ACTIONS.FETCH_BOOK
@@ -54,6 +60,31 @@ interface FetchBookFailed extends Action {
 
 export const fetchBookFailed = (): FetchBookFailed => ({
   type: ACTIONS.FETCH_BOOK_FAILED
+})
+interface DeleteBook extends Action {
+  type: ACTIONS.DELETE_BOOK
+  id: string
+}
+
+export const deleteBook = (id: string): DeleteBook => ({
+  type: ACTIONS.DELETE_BOOK,
+  id,
+})
+
+interface DeleteBookSucceeded extends Action {
+  type: ACTIONS.DELETE_BOOK_SUCCEEDED
+}
+
+export const deleteBookSucceeded = (): DeleteBookSucceeded => ({
+  type: ACTIONS.DELETE_BOOK_SUCCEEDED,
+})
+
+interface DeleteBookFailed extends Action {
+  type: ACTIONS.DELETE_BOOK_FAILED
+}
+
+export const deleteBookFailed = (): DeleteBookFailed => ({
+  type: ACTIONS.DELETE_BOOK_FAILED
 })
 
 // Definition of Reducer

@@ -10,12 +10,14 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import ClearIcon from '@material-ui/icons/Clear'
 import styles from './ReaderMenu.css'
 import { Grid } from '@material-ui/core';
+import { deleteBook } from '../../reducers/bookReducer';
 
 interface Props {
   toggleMenu: () => void
   toggleReaderType: () => void
   toggleDirection: () => void
   backToIndex: () => void
+  deleteBook: () => void
 }
 
 const ReaderMenu = ({
@@ -23,6 +25,7 @@ const ReaderMenu = ({
   toggleReaderType,
   toggleDirection,
   backToIndex,
+  deleteBook,
 }: Props) => (
   <div>
     <Grid
@@ -76,7 +79,7 @@ const ReaderMenu = ({
           </ListItem>
           <ListItem
             button
-            onClick={() => console.log('not yet')}
+            onClick={deleteBook}
             className={styles.menuItem}
           >
             <ListItemIcon>
