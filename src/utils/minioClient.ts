@@ -54,6 +54,18 @@ const uploadImage = (key: string, filepath: PathLike) => {
   })
 }
 
+const deleteImage = (key: string) => {
+  return new Promise((resolve, reject) => {
+    minioClient.deleteObject({
+      Bucket: IMAGE_BUCKET,
+      Key: key,
+    }, (err, data) => {
+      if (err) reject(err)
+      resolve(data)
+    })
+  })
+}
+
 // Looks almost same as #uploadImage, but it may be changed in future...
 const uploadThumbnail = (key: string, filepath: PathLike) => {
   return new Promise((resolve, reject) => {
@@ -78,4 +90,21 @@ const uploadThumbnail = (key: string, filepath: PathLike) => {
   })
 }
 
-export { uploadImage, uploadThumbnail }
+const deleteThumbnail = (key: string) => {
+  return new Promise((resolve, reject) => {
+    minioClient.deleteObject({
+      Bucket: THUMBNAIL_BUCKET,
+      Key: key,
+    }, (err, data) => {
+      if (err) reject(err)
+      resolve(data)
+    })
+  })
+}
+
+export {
+  uploadImage,
+  deleteImage,
+  uploadThumbnail,
+  deleteThumbnail,
+}

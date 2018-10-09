@@ -1,7 +1,6 @@
 import { Db, ObjectId } from "mongodb";
 import { IBookParameter, Book } from "../models/book";
 import { BookIndexFields } from '../models/book'
-import { resolve } from "dns";
 
 
 const COLLECTION_NAME = 'books'
@@ -59,9 +58,19 @@ export const indexBook = async (db: Db, params: IndexBookParams) => {
 
 export const findBook = async (db: Db, params: FindBookParams) => {
   const oid = new ObjectId(params.bookId)
-  const book = await  db.collection(COLLECTION_NAME)
-                          .findOne({ _id: oid })
+  const book: Book = await  db.collection(COLLECTION_NAME)
+                              .findOne({ _id: oid })
   return {
     data: { book }
   }
+}
+
+export const deleteBook = async (db: Db, { bookId }) => {
+  const oid = new ObjectId(bookId)
+  const bookParams = await  db.collection(COLLECTION_NAME)
+                              .findOne({ _id: oid })
+  const book = new Book(bookParams)
+  book.deleteImageFiles()
+
+  await db.collection(COLLECTION_NAME).remove({ _id: oid })
 }

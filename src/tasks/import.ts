@@ -11,8 +11,8 @@ import { ImportContext } from '../models/importContext'
 import * as decompress from 'decompress'
 import * as rimraf from 'rimraf'
 import * as uuid from 'uuid'
-import { insertBook } from '../repository/books_repository';
-import { connectDb } from '../repository/base_repository';
+import { insertBook } from '../repository/booksRepository';
+import { connectDb } from '../repository/baseRepository';
 import { Db } from 'mongodb';
 
 const importDir = 'import'
