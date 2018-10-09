@@ -1,4 +1,5 @@
 import { ObjectId, FindOneOptions } from 'mongodb'
+import { deleteImage, deleteThumbnail } from '../utils/minioClient'
 
 export interface IBookParameter {
   archiveUUID: string
@@ -32,8 +33,18 @@ export class Book implements IBook {
   coverThumbnail: string
   createdAt: Date
 
-  constructor(params: Book) {
-    this.id = params.id
+  constructor(params: IBook) {
+    Object.assign(this, params)
+  }
+
+  deleteImageFiles() {
+    this.pages.map((pageKey) => {
+      deleteImage(pageKey)
+    })
+
+    this.thumbnails.map((thumbnailKey) => {
+      deleteThumbnail(thumbnailKey)
+    })
   }
 }
 

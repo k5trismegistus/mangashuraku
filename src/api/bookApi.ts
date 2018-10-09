@@ -1,6 +1,10 @@
 import { Router } from 'express'
 import { Db } from 'mongodb'
-import { indexBook, findBook } from '../repository/books_repository';
+import {
+  indexBook,
+  findBook,
+  deleteBook,
+} from '../repository/booksRepository';
 
 const PER_PAGE = 20
 
@@ -23,6 +27,13 @@ const bookApiRouter = (db: Db): Router => {
 
     const result = await findBook(db, { bookId })
     res.send(result)
+  })
+
+  router.delete('/:bookId', async (req, res) => {
+    const bookId = req.params.bookId
+    await deleteBook(db, { bookId })
+
+    res.status(204)
   })
 
   return router

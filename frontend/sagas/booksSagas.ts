@@ -1,6 +1,6 @@
 import { call, put, takeLatest } from 'redux-saga/effects'
 import {
-  booksIndex
+  getBooksIndex
 } from '../api/api'
 import {
   ACTIONS,
@@ -13,7 +13,7 @@ function* doFetchBookList(action) {
     const params = {}
     if (action.page) params['page'] = action.page
     if (action.query) params['q'] = action.query
-    const result = yield call(booksIndex, params)
+    const result = yield call(getBooksIndex, params)
     yield put(fetchBookListSucceeded(result.books, result.total))
   } catch (e) {
     yield put(fetchBookListFailed())

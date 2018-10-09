@@ -1,2 +1,2 @@
-import { connectDb } from './base_repository'
+import { connectDb } from './baseRepository'
 export { connectDb }

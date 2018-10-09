@@ -61,9 +61,9 @@ export const Top = ({
         <TableRow>
           <TablePagination
             count={total}
-            rowsPerPage={1}
+            rowsPerPage={20}
             page={page}
-            rowsPerPageOptions={[1]}
+            rowsPerPageOptions={[20]}
             onChangePage={(e, page) => fetchBookList(page, query)}
           />
         </TableRow>
