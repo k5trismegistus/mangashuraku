@@ -13,7 +13,7 @@ export const getBooksIndex = (params) => {
           return convertBooksIndex(response)
        })
 }
-``
+
 export const getBook = (id: string) => {
   return axios.get(`${BASE_PATH}/books/${id}`)
        .then((response) => {

@@ -107,6 +107,7 @@ const mergeProps = (state, { dispatch, ...dispatchProps }, ownProps: Props) => (
   },
   deleteBook() {
     dispatch(deleteBook(state.book._id))
+    dispatch(push('/'))
   }
 })
 
