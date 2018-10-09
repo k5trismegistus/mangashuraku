@@ -1,6 +1,3 @@
 import { IBook, IBookParameter } from './book'
 
-export {
-  IBook,
-  IBookParameter,
-}
+export { IBook, IBookParameter }
