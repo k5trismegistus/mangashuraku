@@ -1,12 +1,13 @@
 import { Db, ObjectId } from 'mongodb'
+import {mongodb} from '../lib/mongo'
 import { IBookParameter, Book } from '../models/book'
 import { BookIndexFields } from '../models/book'
 
 const COLLECTION_NAME = 'books'
 
-export const insertBook = (db: Db, params: IBookParameter): Promise<Book> => {
+export const insertBook = (params: IBookParameter): Promise<Book> => {
   return new Promise((resolve, reject) => {
-    db.collection(COLLECTION_NAME).insertOne(params, (err, result) => {
+    mongodb.collection(COLLECTION_NAME).insertOne(params, (err, result) => {
       if (err) return reject(err)
 
       const book = new Book({
@@ -32,7 +33,7 @@ export interface FindBookParams {
   bookId: string
 }
 
-export const indexBook = async (db: Db, params: IndexBookParams) => {
+export const indexBook = async (params: IndexBookParams) => {
   const searchQuery = params.search
     ? {
         $or: [
@@ -42,7 +43,7 @@ export const indexBook = async (db: Db, params: IndexBookParams) => {
       }
     : {}
 
-  const result = await db
+  const result = await mongodb
     .collection(COLLECTION_NAME)
     .find(searchQuery, BookIndexFields)
     .sort({ order_by: -1 })
@@ -50,27 +51,22 @@ export const indexBook = async (db: Db, params: IndexBookParams) => {
     .limit(params.limit ? params.limit : 20)
 
   const total = await result.count()
-  const books = await result.toArray()
+  const booksParams = await result.toArray()
+  const books = booksParams.map((p) => (new Book(p)))
 
   return {
-    meta: { total },
-    data: { books },
+    total,
+    books
   }
 }
 
-export const findBook = async (db: Db, params: FindBookParams) => {
+export const findBook = async (params: FindBookParams): Promise<Book> => {
   const oid = new ObjectId(params.bookId)
-  const book: Book = await db.collection(COLLECTION_NAME).findOne({ _id: oid })
-  return {
-    data: { book },
-  }
+  const bookParams = await mongodb.collection(COLLECTION_NAME).findOne({ _id: oid })
+  return  new Book(bookParams)
 }
 
-export const deleteBook = async (db: Db, { bookId }) => {
+export const deleteBook = async ({ bookId }) => {
   const oid = new ObjectId(bookId)
-  const bookParams = await db.collection(COLLECTION_NAME).findOne({ _id: oid })
-  const book = new Book(bookParams)
-  book.deleteImageFiles()
-
-  await db.collection(COLLECTION_NAME).remove({ _id: oid })
+  await mongodb.collection(COLLECTION_NAME).remove({ _id: oid })
 }

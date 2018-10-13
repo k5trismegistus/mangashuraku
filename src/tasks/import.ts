@@ -12,8 +12,6 @@ import * as decompress from 'decompress'
 import * as rimraf from 'rimraf'
 import * as uuid from 'uuid'
 import { insertBook } from '../repository/booksRepository'
-import { connectDb } from '../repository/baseRepository'
-import { Db } from 'mongodb'
 
 const importDir = 'import'
 const tmpDir = 'tmp'
@@ -93,21 +91,20 @@ const uploadThumbnails = (ctx: ImportContext): Promise<ImportContext> => {
 
 const registerToDb = (ctx: ImportContext): Promise<ImportContext> => {
   return new Promise((resolve, reject) => {
-    connectDb().then((db: Db) => {
-      insertBook(db, {
-        archiveUUID: ctx.archiveUUID,
-        originalName: ctx.originalFilename,
-        title: '',
-        authorIds: [],
-        organizationIds: [],
-        genreIds: [],
-        pages: ctx.uploadedPageKeys,
-        thumbnails: ctx.uploadedThumbnailKeys,
-        cover: ctx.uploadedPageKeys[0],
-        coverThumbnail: ctx.uploadedThumbnailKeys[0],
-        createdAt: new Date(),
-      }).then(() => resolve(ctx))
-    })
+
+    insertBook({
+      archiveUUID: ctx.archiveUUID,
+      originalName: ctx.originalFilename,
+      title: '',
+      authorIds: [],
+      organizationIds: [],
+      genreIds: [],
+      pages: ctx.uploadedPageKeys,
+      thumbnails: ctx.uploadedThumbnailKeys,
+      cover: ctx.uploadedPageKeys[0],
+      coverThumbnail: ctx.uploadedThumbnailKeys[0],
+      createdAt: new Date(),
+    }).then(() => resolve(ctx))
   })
 }
 
