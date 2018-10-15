@@ -2,7 +2,7 @@ version: '3'
 volumes:
   node_modules:
 services:
-  app:
+  api:
     build: .
     ports:
       - '3001:3001'
