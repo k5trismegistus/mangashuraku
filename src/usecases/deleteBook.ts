@@ -10,4 +10,4 @@ const deleteBookUsecase = async ({ bookId }) => {
   return
 }
 
-export default deleteBookUsecase
+export  {deleteBookUsecase}

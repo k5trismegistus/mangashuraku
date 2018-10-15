@@ -7,4 +7,4 @@ const getBookUsecase = async ({ bookId }) => {
   }
 }
 
-export default getBookUsecase
+export { getBookUsecase }

@@ -3,7 +3,7 @@
     "module": "commonjs",
     "target": "es2017",
     "sourceMap": true,
-    "types" : ["node"],
+    "types" : ["node", "jest"],
     "strictFunctionTypes": false,
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
@@ -15,7 +15,5 @@
   ],
   "exclude": [
     "node_modules",
-    "**/*.spec.ts",
-    "**/*.test.ts"
   ]
 }

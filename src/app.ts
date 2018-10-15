@@ -1,4 +1,4 @@
-import * as Express from 'express';
+import * as Express from 'express'
 import { initApi } from './api'
 
 const app = Express()

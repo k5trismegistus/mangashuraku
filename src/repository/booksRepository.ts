@@ -1,5 +1,5 @@
-import { Db, ObjectId } from 'mongodb'
-import {mongodb} from '../lib/mongo'
+import { ObjectId } from 'mongodb'
+import { mongodb } from '../lib/mongo'
 import { IBookParameter, Book } from '../models/book'
 import { BookIndexFields } from '../models/book'
 
@@ -21,19 +21,7 @@ export const insertBook = (params: IBookParameter): Promise<Book> => {
   })
 }
 
-export interface IndexBookParams {
-  search?: string
-  orderBy?: 'createdAt'
-  asc?: boolean
-  limit?: number
-  offset?: number
-}
-
-export interface FindBookParams {
-  bookId: string
-}
-
-export const indexBook = async (params: IndexBookParams) => {
+export const indexBook = async (params) => {
   const searchQuery = params.search
     ? {
         $or: [
@@ -60,7 +48,7 @@ export const indexBook = async (params: IndexBookParams) => {
   }
 }
 
-export const findBook = async (params: FindBookParams): Promise<Book> => {
+export const findBook = async (params): Promise<Book> => {
   const oid = new ObjectId(params.bookId)
   const bookParams = await mongodb.collection(COLLECTION_NAME).findOne({ _id: oid })
   return  new Book(bookParams)
