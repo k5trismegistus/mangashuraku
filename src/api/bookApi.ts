@@ -1,42 +1,28 @@
 import { Router } from 'express'
-import { Db } from 'mongodb'
 import {
-  indexBook,
-  findBook,
-  deleteBook,
-} from '../repository/booksRepository';
+  getBooksUsecase,
+  getBookUsecase,
+  deleteBookUsecase,
+} from '../usecases'
 
-const PER_PAGE = 20
+const bookApiRouter = Router()
 
-const bookApiRouter = (db: Db): Router => {
-  const router = Router()
+bookApiRouter.get('/', async (req, res) => {
+  const params = req.query
+  const result = await getBooksUsecase(params)
+  res.send(result)
+})
 
-  router.get('/', async (req, res) => {
-    const params = req.query
-    const queryParams = {
-      search: (params.q ? params.q : null),
-      limit: PER_PAGE,
-      offset: PER_PAGE * (params.page ? params.page : 0)
-    }
-    const result = await indexBook(db, queryParams)
-    res.send(result)
-  })
+bookApiRouter.get('/:bookId', async (req, res) => {
+  const bookId = req.params.bookId
+  const result = await getBookUsecase({ bookId })
+  res.send(result)
+})
 
-  router.get('/:bookId', async (req, res) => {
-    const bookId = req.params.bookId
-
-    const result = await findBook(db, { bookId })
-    res.send(result)
-  })
-
-  router.delete('/:bookId', async (req, res) => {
-    const bookId = req.params.bookId
-    await deleteBook(db, { bookId })
-
-    res.status(204)
-  })
-
-  return router
-}
+bookApiRouter.delete('/:bookId', async (req, res) => {
+  const bookId = req.params.bookId
+  await deleteBookUsecase({ bookId })
+  res.status(204)
+})
 
 export { bookApiRouter }

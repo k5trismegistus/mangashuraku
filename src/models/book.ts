@@ -16,7 +16,7 @@ export interface IBookParameter {
 }
 
 export interface IBook extends IBookParameter {
-    id: ObjectId
+  id: ObjectId
 }
 
 export class Book implements IBook {
@@ -38,11 +38,11 @@ export class Book implements IBook {
   }
 
   deleteImageFiles() {
-    this.pages.map((pageKey) => {
+    this.pages.map(pageKey => {
       deleteImage(pageKey)
     })
 
-    this.thumbnails.map((thumbnailKey) => {
+    this.thumbnails.map(thumbnailKey => {
       deleteThumbnail(thumbnailKey)
     })
   }
@@ -62,5 +62,5 @@ export const BookIndexFields: FindOneOptions = {
     // cover: 1,
     // coverThumbnail: 1,
     // createdAt: 1
-  }
+  },
 }

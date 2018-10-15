@@ -1,20 +1,13 @@
-import { Express, Router } from 'express';
-import { Db } from 'mongodb'
-
+import { Express, Router } from 'express'
 import { healthApiRouter } from './healthApi'
 import { bookApiRouter } from './bookApi'
 
-const apiRouter = (db) => {
-  const router = Router()
-  router.use('/health', healthApiRouter(db))
-  router.use('/books', bookApiRouter(db))
 
-  return router
-}
-
-
-const initApi = (app: Express, db: Db) => {
-  app.use('/api', apiRouter(db))
+const initApi = (app: Express) => {
+  const apiRouter = Router()
+  apiRouter.use('/health', healthApiRouter)
+  apiRouter.use('/books', bookApiRouter)
+  app.use('/api', apiRouter)
 }
 
 export { initApi }

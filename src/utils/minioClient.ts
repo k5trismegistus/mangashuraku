@@ -1,5 +1,5 @@
-import { S3 } from 'aws-sdk';
-import { PathLike, readFile } from 'fs';
+import { S3 } from 'aws-sdk'
+import { PathLike, readFile } from 'fs'
 
 const IMAGE_BUCKET = 'mangashuraku'
 const THUMBNAIL_BUCKET = 'mangashuraku-thumbnail'
@@ -10,7 +10,7 @@ const minioClient = new S3({
   accessKeyId: 'AKIA_MINIO_ACCESS_KEY',
   secretAccessKey: 'minio_secret_key',
   s3ForcePathStyle: true,
-  sslEnabled: false
+  sslEnabled: false,
 })
 
 // BUCKETS.forEach(bucket => {
@@ -39,30 +39,36 @@ const uploadImage = (key: string, filepath: PathLike) => {
         return reject(err)
       }
 
-      minioClient.putObject({
-        Bucket: IMAGE_BUCKET,
-        Key: key,
-        Body: data
-      }, (err, etag) => {
-        if (err) {
-          console.log(err)
-          return reject(err)
+      minioClient.putObject(
+        {
+          Bucket: IMAGE_BUCKET,
+          Key: key,
+          Body: data,
+        },
+        (err, etag) => {
+          if (err) {
+            console.log(err)
+            return reject(err)
+          }
+          resolve(etag)
         }
-        resolve(etag)
-      })
+      )
     })
   })
 }
 
 const deleteImage = (key: string) => {
   return new Promise((resolve, reject) => {
-    minioClient.deleteObject({
-      Bucket: IMAGE_BUCKET,
-      Key: key,
-    }, (err, data) => {
-      if (err) reject(err)
-      resolve(data)
-    })
+    minioClient.deleteObject(
+      {
+        Bucket: IMAGE_BUCKET,
+        Key: key,
+      },
+      (err, data) => {
+        if (err) reject(err)
+        resolve(data)
+      }
+    )
   })
 }
 
@@ -75,36 +81,37 @@ const uploadThumbnail = (key: string, filepath: PathLike) => {
         return reject(err)
       }
 
-      minioClient.putObject({
-        Bucket: THUMBNAIL_BUCKET,
-        Key: key,
-        Body: data
-      }, (err, etag) => {
-        if (err) {
-          console.log(err)
-          return reject(err)
+      minioClient.putObject(
+        {
+          Bucket: THUMBNAIL_BUCKET,
+          Key: key,
+          Body: data,
+        },
+        (err, etag) => {
+          if (err) {
+            console.log(err)
+            return reject(err)
+          }
+          resolve(etag)
         }
-        resolve(etag)
-      })
+      )
     })
   })
 }
 
 const deleteThumbnail = (key: string) => {
   return new Promise((resolve, reject) => {
-    minioClient.deleteObject({
-      Bucket: THUMBNAIL_BUCKET,
-      Key: key,
-    }, (err, data) => {
-      if (err) reject(err)
-      resolve(data)
-    })
+    minioClient.deleteObject(
+      {
+        Bucket: THUMBNAIL_BUCKET,
+        Key: key,
+      },
+      (err, data) => {
+        if (err) reject(err)
+        resolve(data)
+      }
+    )
   })
 }
 
-export {
-  uploadImage,
-  deleteImage,
-  uploadThumbnail,
-  deleteThumbnail,
-}
+export { uploadImage, deleteImage, uploadThumbnail, deleteThumbnail }

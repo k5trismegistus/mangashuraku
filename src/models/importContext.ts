@@ -20,14 +20,12 @@ export class ImportContext implements IImportContext {
   }
 
   get uploadedPageKeys() {
-    return this.pages.map((page) => (
-      `${this.archiveUUID}/${basename(page)}`
-    ))
+    return this.pages.map(page => `${this.archiveUUID}/${basename(page)}`)
   }
 
   get uploadedThumbnailKeys() {
-    return this.thumbnails.map((thumbnail) => (
-      `${this.archiveUUID}/${basename(thumbnail)}`
-    ))
+    return this.thumbnails.map(
+      thumbnail => `${this.archiveUUID}/${basename(thumbnail)}`
+    )
   }
 }
