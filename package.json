@@ -9,7 +9,7 @@
     "dev": "nodemon",
     "import": "node dist/tasks/import.js",
     "lint": "prettier --write ./src/**/*.ts",
-    "test": "jest",
+    "test": "jest --forceExit",
     "console": "ts-node"
   },
   "repository": {
