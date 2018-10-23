@@ -2,7 +2,7 @@ import { indexBook } from '../repository/booksRepository'
 
 const PER_PAGE = 20
 
-const getBooksUsecase = async (params) => {
+const getBooksUsecase = async params => {
   const queryParams = {
     search: params.q ? params.q : null,
     limit: PER_PAGE,
@@ -12,7 +12,7 @@ const getBooksUsecase = async (params) => {
 
   return {
     meta: { total: result.total },
-    data: { books: result.books }
+    data: { books: result.books },
   }
 }
 export { getBooksUsecase }

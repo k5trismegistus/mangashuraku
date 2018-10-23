@@ -91,7 +91,6 @@ const uploadThumbnails = (ctx: ImportContext): Promise<ImportContext> => {
 
 const registerToDb = (ctx: ImportContext): Promise<ImportContext> => {
   return new Promise((resolve, reject) => {
-
     insertBook({
       archiveUUID: ctx.archiveUUID,
       originalName: ctx.originalFilename,
