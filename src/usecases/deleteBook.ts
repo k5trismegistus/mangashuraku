@@ -1,7 +1,4 @@
-import {
-  findBook,
-  deleteBook,
-} from '../repository/booksRepository'
+import { findBook, deleteBook } from '../repository/booksRepository'
 
 const deleteBookUsecase = async ({ bookId }) => {
   const book = await findBook({ bookId })
@@ -10,4 +7,4 @@ const deleteBookUsecase = async ({ bookId }) => {
   return
 }
 
-export  {deleteBookUsecase}
+export { deleteBookUsecase }

@@ -1,9 +1,5 @@
 import { Router } from 'express'
-import {
-  getBooksUsecase,
-  getBookUsecase,
-  deleteBookUsecase,
-} from '../usecases'
+import { getBooksUsecase, getBookUsecase, deleteBookUsecase } from '../usecases'
 
 const bookApiRouter = Router()
 

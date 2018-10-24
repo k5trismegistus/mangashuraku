@@ -21,7 +21,7 @@ export const insertBook = (params: IBookParameter): Promise<Book> => {
   })
 }
 
-export const indexBook = async (params) => {
+export const indexBook = async params => {
   const searchQuery = params.search
     ? {
         $or: [
@@ -40,18 +40,20 @@ export const indexBook = async (params) => {
 
   const total = await result.count()
   const booksParams = await result.toArray()
-  const books = booksParams.map((p) => (new Book(p)))
+  const books = booksParams.map(p => new Book(p))
 
   return {
     total,
-    books
+    books,
   }
 }
 
 export const findBook = async (params): Promise<Book> => {
   const oid = new ObjectId(params.bookId)
-  const bookParams = await mongodb.collection(COLLECTION_NAME).findOne({ _id: oid })
-  return  new Book(bookParams)
+  const bookParams = await mongodb
+    .collection(COLLECTION_NAME)
+    .findOne({ _id: oid })
+  return new Book(bookParams)
 }
 
 export const deleteBook = async ({ bookId }) => {
