@@ -51,3 +51,9 @@ services:
       MINIO_ACCESS_KEY: AKIA_MINIO_ACCESS_KEY
       MINIO_SECRET_KEY: minio_secret_key
     command: server /export
+  deploy:
+    build: ./deploy
+    volumes:
+     - ./deploy:/app
+     - ./:/src
+    working_dir: /app
