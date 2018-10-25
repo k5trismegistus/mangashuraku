@@ -6,7 +6,7 @@ const THUMBNAIL_BUCKET = 'mangashuraku-thumbnail'
 const BUCKETS = [IMAGE_BUCKET, THUMBNAIL_BUCKET]
 
 const minioClient = new S3({
-  endpoint: 'minio:9000',
+  endpoint: process.env.MINIO_ENDPOINT,
   accessKeyId: 'AKIA_MINIO_ACCESS_KEY',
   secretAccessKey: 'minio_secret_key',
   s3ForcePathStyle: true,

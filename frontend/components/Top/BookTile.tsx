@@ -8,7 +8,7 @@ import Typography from '@material-ui/core/Typography'
 
 import styles from './BookTile.css'
 
-const ThumbnailBasePath = 'http://localhost:9000/mangashuraku-thumbnail'
+const ThumbnailBasePath = `http://${process.env.MINIO_ENDPOINT}/mangashuraku-thumbnail`
 
 interface Props {
   book: BookSummary,

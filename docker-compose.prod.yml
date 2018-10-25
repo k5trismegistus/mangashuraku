@@ -14,9 +14,7 @@ services:
       - mongodb
       - minio
     working_dir: '/app'
-    command: 'npm run dev'
-    environment:
-      - MINIO_ENDPOINT=localhost:9000
+    command: 'npm run start'
   frontend:
     build:
       context: ./frontend
@@ -31,9 +29,6 @@ services:
       - mongodb
       - minio
     command: 'npm run dev'
-    environment:
-      - API_ENDPOINT=localhost:3001
-      - MINIO_ENDPOINT=localhost:9000
   mongodb:
     image: mongo:3.2-jessie
     ports:
