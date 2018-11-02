@@ -11,7 +11,12 @@ data
 /api/import/*
 !/api/import/.keep
 
+/deploy/tmp/*
+!/deploy/tmp
+
 tmp/*
 !tmp/.keep
 
 /frontend/.cache/*
+
+.env

@@ -55,5 +55,7 @@ services:
     build: ./deploy
     volumes:
      - ./deploy:/app
-     - ./:/src
+     - ./:/app/src/
+     - ./tmp:/tmp
     working_dir: /app
+    env_file: ./deploy/.env
