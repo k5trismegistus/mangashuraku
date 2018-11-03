@@ -1,9 +1,12 @@
 {
   "plugins": [
-      ["transform-runtime",
+    [
+      "transform-inline-environment-variables",
+      "transform-runtime",
       {
-          "polyfill": false,
-          "regenerator": true
-      }]
+        "polyfill": false,
+        "regenerator": true
+      }
+    ]
   ]
 }

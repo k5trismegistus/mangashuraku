@@ -14,9 +14,9 @@ services:
       - mongodb
       - minio
     working_dir: '/app'
-    command: 'npm run dev'
+    command: 'npm run start'
     environment:
-      - MINIO_ENDPOINT=localhost:9000
+      - MINIO_ENDPOINT=192.168.31.9:8000
   frontend:
     build:
       context: ./frontend
@@ -30,10 +30,10 @@ services:
       - api
       - mongodb
       - minio
-    command: 'npm run dev'
+    command: 'npm run start'
     environment:
-      - API_ENDPOINT=localhost:3001
-      - MINIO_ENDPOINT=localhost:9000
+      - API_ENDPOINT=192.168.31.9:3001
+      - MINIO_ENDPOINT=192.168.31.9:8000
   mongodb:
     image: mongo:3.2-jessie
     ports:
@@ -46,16 +46,8 @@ services:
       - ./data/minio/data:/export:cached
       - ./data/minio/config:/root/.minio:cached
     ports:
-      - 9000:9000
+      - 8000:9000
     environment:
       MINIO_ACCESS_KEY: AKIA_MINIO_ACCESS_KEY
       MINIO_SECRET_KEY: minio_secret_key
     command: server /export
-  deploy:
-    build: ./deploy
-    volumes:
-     - ./deploy:/app
-     - ./:/app/src/
-     - ./tmp:/tmp
-    working_dir: /app
-    env_file: ./deploy/.env

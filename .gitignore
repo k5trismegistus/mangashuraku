@@ -3,14 +3,20 @@ node_modules
 # minio
 data
 
-/dist/*
-!/dist/.keep
+/api/dist/*
+!/api/dist/.keep
+/frontend/dist/*
+!/frontend/dist/.keep
 
-/import/*
-!/import/.keep
+/api/import/*
+!/api/import/.keep
 
-/tmp/*
-!/tmp/.keep
+/deploy/tmp/*
+!/deploy/tmp
 
-frontend/.cache
-frontend/dist
+tmp/*
+!tmp/.keep
+
+/frontend/.cache/*
+
+.env

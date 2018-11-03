@@ -5,7 +5,7 @@ import {
   convertBook,
 } from './resposneConverters'
 
-const BASE_PATH = 'http://localhost:3001/api'
+const BASE_PATH = `http://${process.env.API_ENDPOINT}/api`
 
 export const getBooksIndex = (params) => {
   return axios.get(`${BASE_PATH}/books/`, { params })

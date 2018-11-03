@@ -3,7 +3,7 @@ import * as ReactDOM from 'react-dom'
 import Button from '@material-ui/core/Button'
 import styles from './QuickBar.css'
 
-const ThumbnailBasePath = 'http://localhost:9000/mangashuraku-thumbnail'
+const ThumbnailBasePath = `http://${process.env.MINIO_ENDPOINT}/mangashuraku-thumbnail`
 
 interface Props {
   thumbnails: Array<string>

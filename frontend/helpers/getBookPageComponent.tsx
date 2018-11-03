@@ -2,7 +2,7 @@ import * as React from 'react'
 import { Book } from '../models'
 import { BookPage } from '../components/reader/BookPage'
 
-const PageBasePath = 'http://localhost:9000/mangashuraku'
+const PageBasePath = `http://${process.env.MINIO_ENDPOINT}/mangashuraku`
 
 const getBookPageComponent = (book: Book, pageNumber: number) {
   if (pageNumber < 0 || pageNumber > book.pages.length - 1) {
