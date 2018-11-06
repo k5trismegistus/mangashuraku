@@ -10,7 +10,6 @@ import DeleteForeverIcon from '@material-ui/icons/DeleteForever'
 import ClearIcon from '@material-ui/icons/Clear'
 import styles from './ReaderMenu.css'
 import { Grid } from '@material-ui/core';
-import { deleteBook } from '../../reducers/bookReducer';
 
 interface Props {
   toggleMenu: () => void
