@@ -10,13 +10,14 @@ services:
     volumes:
       - ./api:/app:cached
       - ./api/node_modules:/app/node_modules:cached
+      - ~/public/comics:/app/import
     links:
       - mongodb
       - minio
     working_dir: '/app'
     command: 'npm run start'
     environment:
-      - MINIO_ENDPOINT=192.168.31.9:8000
+      - MINIO_ENDPOINT=minio:9000
   frontend:
     build:
       context: ./frontend
