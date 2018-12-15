@@ -1,8 +1,9 @@
 import * as React from 'react'
 import {
   Grid,
-  TableRow,
-  TablePagination,
+  Button,
+  Select,
+  MenuItem,
 } from '@material-ui/core'
 import { BookSummary } from '../../models';
 
@@ -18,7 +19,10 @@ interface Props {
   page: number
   total: number
   fetchBookList: (page: number, query: string) => void
+  onChangePage: (page: number, query: string) => void
 }
+
+const PER_PAGE = 20
 
 export const Top = ({
   books,
@@ -26,6 +30,7 @@ export const Top = ({
   page,
   total,
   fetchBookList,
+  onChangePage,
 }: Props) => (
   <div className={styles.container}>
     <Grid container>
@@ -39,34 +44,54 @@ export const Top = ({
           fetchBookList={fetchBookList}
         />
       </Grid>
-      {
-        books.map(book => (
-          <Grid
-            item
-            key={book._id}
-          >
-            <Link to={`/books/${book._id}`}>
-              <BookTile
-                book={book}
-              />
-            </Link>
-          </Grid>
-        ))
-      }
+      <Grid
+        container
+      >
+        {
+          books.map(book => (
+            <Grid
+              item
+              key={book._id}
+              xs={3}
+            >
+              <Link to={`/books/${book._id}`}>
+                <BookTile
+                  book={book}
+                />
+              </Link>
+            </Grid>
+          ))
+        }
+      </Grid>
       <Grid
         className={styles.pager}
         item
         xs={12}
       >
-        <TableRow>
-          <TablePagination
-            count={total}
-            rowsPerPage={20}
-            page={page}
-            rowsPerPageOptions={[20]}
-            onChangePage={(e, page) => fetchBookList(page, query)}
-          />
-        </TableRow>
+        <p>{page} of {Math.floor(total / PER_PAGE)}</p>
+
+        {
+          page > 0 ?
+            <Button onClick={() => onChangePage(page - 1, query) }>
+              {'<'}
+            </Button> : null
+        } 
+        <Select
+          value={page}
+          onChange={(e) => onChangePage(e.target.value, query) }
+        >
+          {
+            Array.from(Array(Math.ceil(total / PER_PAGE)), (v, k) => k).map((i) => (
+              <MenuItem value={i}>{i}</MenuItem>
+            ))
+          }
+        </Select>
+        {
+          page < Math.floor(total / PER_PAGE) ?
+            <Button onClick={() => onChangePage(page + 1, query) }>
+              {'>'}
+            </Button> : null
+        } 
       </Grid>
     </Grid>
   </div>
