@@ -23,7 +23,6 @@ const mapDispatchToProps = (dispatch) => ({
     dispatch(fetchBookList(page, query))
   },
   onChangePage(page: number, query: string) {
-    console.log(page)
     dispatch(push(`${window.location.pathname}?page=${page}`))
     dispatch(fetchBookList(page, query))
   },
@@ -50,12 +49,11 @@ class TopContainer extends React.Component<Props, {}> {
     var query = window.location.search
     query.slice(1).split('&').forEach((q) => {
       params[q.split('=')[0]] = q.split('=')[1]
-    })  
+    })
     const page = params['page'] ? parseInt(params.page) : 0
-    console.log(window.location)
     this.props.onChangePage(page, '')
   }
-  
+
 
   render() {
     return (<Top

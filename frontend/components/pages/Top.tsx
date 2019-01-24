@@ -68,30 +68,40 @@ export const Top = ({
         item
         xs={12}
       >
-        <p>{page} of {Math.floor(total / PER_PAGE)}</p>
 
         {
           page > 0 ?
-            <Button onClick={() => onChangePage(page - 1, query) }>
+            <Button
+              onClick={() => onChangePage(page - 1, query) }
+              size="large"
+              variant="contained"
+              className={styles.backButton}
+            >
               {'<'}
             </Button> : null
-        } 
+        }
+        <p className={styles.pageNumber}>{page} of {Math.floor(total / PER_PAGE)}</p>
         <Select
           value={page}
           onChange={(e) => onChangePage(e.target.value, query) }
         >
           {
             Array.from(Array(Math.ceil(total / PER_PAGE)), (v, k) => k).map((i) => (
-              <MenuItem value={i}>{i}</MenuItem>
-            ))
-          }
+                <MenuItem value={i}>{i}</MenuItem>
+              ))
+            }
         </Select>
         {
           page < Math.floor(total / PER_PAGE) ?
-            <Button onClick={() => onChangePage(page + 1, query) }>
+            <Button
+              onClick={() => onChangePage(page + 1, query) }
+              size="large"
+              variant="contained"
+              className={styles.forwardButton}
+            >
               {'>'}
             </Button> : null
-        } 
+          }
       </Grid>
     </Grid>
   </div>
