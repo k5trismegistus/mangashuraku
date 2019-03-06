@@ -19,7 +19,6 @@ interface Props {
   page: number
   total: number
   fetchBookList: (page: number, query: string) => void
-  onChangePage: (page: number, query: string) => void
 }
 
 const PER_PAGE = 20
@@ -30,7 +29,6 @@ export const Top = ({
   page,
   total,
   fetchBookList,
-  onChangePage,
 }: Props) => (
   <div className={styles.container}>
     <Grid container>
@@ -72,7 +70,7 @@ export const Top = ({
         {
           page > 0 ?
             <Button
-              onClick={() => onChangePage(page - 1, query) }
+              onClick={() => fetchBookList(page - 1, query) }
               size="large"
               variant="contained"
               className={styles.backButton}
@@ -83,7 +81,7 @@ export const Top = ({
         <p className={styles.pageNumber}>{page} of {Math.floor(total / PER_PAGE)}</p>
         <Select
           value={page}
-          onChange={(e) => onChangePage(e.target.value, query) }
+          onChange={(e) => fetchBookList(e.target.value, query) }
         >
           {
             Array.from(Array(Math.ceil(total / PER_PAGE)), (v, k) => k).map((i) => (
@@ -94,7 +92,7 @@ export const Top = ({
         {
           page < Math.floor(total / PER_PAGE) ?
             <Button
-              onClick={() => onChangePage(page + 1, query) }
+              onClick={() => fetchBookList(page + 1, query) }
               size="large"
               variant="contained"
               className={styles.forwardButton}

@@ -1,6 +1,7 @@
 import * as React from 'react'
 import { connect } from 'react-redux'
 import { push } from 'connected-react-router'
+import * as querystring from 'querystring'
 
 import {
   fetchBookList
@@ -19,11 +20,14 @@ const mapStateToProps = (state: RootStore) => ({
 })
 
 const mapDispatchToProps = (dispatch) => ({
-  fetchBookList(page, query) {
-    dispatch(fetchBookList(page, query))
-  },
-  onChangePage(page: number, query: string) {
-    dispatch(push(`${window.location.pathname}?page=${page}`))
+  fetchBookList(page: number, query: string) {
+    const queryParams = {}
+    if (page > 0) queryParams['page'] = page
+    if (query) queryParams['q'] = query
+
+    const queryString = querystring.stringify(queryParams)
+
+    dispatch(push(`${window.location.pathname}?${queryString}`))
     dispatch(fetchBookList(page, query))
   },
 })
@@ -34,7 +38,6 @@ type Props = {
   page: number
   query: string
   fetchBookList: (page: number, query: string) => void
-  onChangePage: (page: number, query: string) => void
 }
 
 class TopContainer extends React.Component<Props, {}> {
@@ -46,12 +49,13 @@ class TopContainer extends React.Component<Props, {}> {
   componentWillMount() {
     // const params = new URLSearchParams(window.location.search);
     const params = {}
-    var query = window.location.search
+    const query = window.location.search
     query.slice(1).split('&').forEach((q) => {
       params[q.split('=')[0]] = q.split('=')[1]
     })
+    const searchQuery = params['q'] ? params['q'] : ''
     const page = params['page'] ? parseInt(params.page) : 0
-    this.props.onChangePage(page, '')
+    this.props.fetchBookList(page, searchQuery)
   }
 
 
@@ -62,7 +66,6 @@ class TopContainer extends React.Component<Props, {}> {
       query={this.props.query}
       page={this.props.page}
       fetchBookList={this.props.fetchBookList}
-      onChangePage={this.props.onChangePage}
     />)
   }
 }
