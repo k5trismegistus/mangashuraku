@@ -28,6 +28,12 @@ class SearchField extends React.Component<Props, State> {
     })
   }
 
+  onKeyPressed(e) {
+    if (e.keyCode == 13) {
+      this.props.fetchBookList(0, this.state.query)
+    }
+  }
+
   render() {
     return (
       <div className={styles.container}>
@@ -38,6 +44,7 @@ class SearchField extends React.Component<Props, State> {
           onChange={(e) => this.onChangeQuery(e)}
           margin="normal"
           className={styles.searchInput}
+          onKeyPressed={this.onKeyPressed}
         />
         <Button
           variant="contained"

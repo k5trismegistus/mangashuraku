@@ -78,19 +78,20 @@ export const Top = ({
               {'<'}
             </Button> : null
         }
-        <p className={styles.pageNumber}>{page} of {Math.floor(total / PER_PAGE)}</p>
+        <p className={styles.pageNumber}>{page + 1} of {Math.ceil(total / PER_PAGE)}</p>
         <Select
           value={page}
           onChange={(e) => fetchBookList(e.target.value, query) }
         >
           {
             Array.from(Array(Math.ceil(total / PER_PAGE)), (v, k) => k).map((i) => (
-                <MenuItem value={i}>{i}</MenuItem>
+                // UIに表示されるページ番号は1始まり
+                <MenuItem value={i}>{i + 1}</MenuItem>
               ))
             }
         </Select>
         {
-          page < Math.floor(total / PER_PAGE) ?
+          page < Math.ceil(total / PER_PAGE) - 1 ?
             <Button
               onClick={() => fetchBookList(page + 1, query) }
               size="large"
