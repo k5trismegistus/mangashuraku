@@ -53,7 +53,7 @@ class TopContainer extends React.Component<Props, {}> {
     query.slice(1).split('&').forEach((q) => {
       params[q.split('=')[0]] = q.split('=')[1]
     })
-    const searchQuery = params['q'] ? params['q'] : ''
+    const searchQuery = params['q'] ? decodeURI(params['q']) : ''
     const page = params['page'] ? parseInt(params['page']) : 0
     this.props.fetchBookList(page, searchQuery)
   }
