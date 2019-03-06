@@ -54,7 +54,7 @@ class TopContainer extends React.Component<Props, {}> {
       params[q.split('=')[0]] = q.split('=')[1]
     })
     const searchQuery = params['q'] ? params['q'] : ''
-    const page = params['page'] ? parseInt(params.page) : 0
+    const page = params['page'] ? parseInt(params['page']) : 0
     this.props.fetchBookList(page, searchQuery)
   }
 
