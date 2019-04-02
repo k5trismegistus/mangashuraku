@@ -21,16 +21,16 @@ def rebuild_container(ctx):
     production(ctx)
     with Connection(ctx.host, user=ctx.user, connect_kwargs=ctx.connect_kwargs) as conn:
         conn.run(f'cd {WORKING_DIR}; docker-compose -f docker-compose.prod.yml stop')
-        conn.run(f'cd {WORKING_DIR}; docker-compose -f docker-compose.prod.yml build --no-cache')       
+        conn.run(f'cd {WORKING_DIR}; docker-compose -f docker-compose.prod.yml build --no-cache')
     restart(ctx)
 
-@task 
+@task
 def rebuild(ctx):
     production(ctx)
     with Connection(ctx.host, user=ctx.user, connect_kwargs=ctx.connect_kwargs) as conn:
         conn.run(f'cd {WORKING_DIR}; docker-compose -f docker-compose.prod.yml run --rm api npm run build')
-        conn.run(f'cd {WORKING_DIR}; docker-compose -f docker-compose.prod.yml run --rm frontend npm run build')       
-
+        conn.run(f'cd {WORKING_DIR}; docker-compose -f docker-compose.prod.yml run --rm frontend npm run build')
+        conn.run(f'cp {WORKING_DIR}/frontend/serve.json {WORKING_DIR}/frontend/dist')
 
 @task
 def restart(ctx):
@@ -48,4 +48,5 @@ def deploy(ctx):
         conn.run(f'rm -f /tmp/{COMPRESSED_NAME}')
         conn.put(f'/tmp/{COMPRESSED_NAME}', remote=f'/tmp/{COMPRESSED_NAME}')
         conn.run(f'tar -zxvf /tmp/{COMPRESSED_NAME} -C {WORKING_DIR} --overwrite --strip 1')
+        conn.run(f'cp {WORKING_DIR}/frontend/serve.json {WORKING_DIR}/frontend/dist')
     rebuild(ctx)
