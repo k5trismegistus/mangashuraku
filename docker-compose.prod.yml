@@ -33,8 +33,8 @@ services:
       - minio
     command: 'npm run start'
     environment:
-      - API_ENDPOINT=192.168.31.9:3001
-      - MINIO_ENDPOINT=192.168.31.9:8000
+      - API_ENDPOINT=$API_ENDPOINT
+      - MINIO_ENDPOINT=$MINIO_ENDPOINT
   mongodb:
     image: mongo:3.2-jessie
     ports:

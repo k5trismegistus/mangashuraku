@@ -20,3 +20,4 @@ tmp/*
 /frontend/.cache/*
 
 .env
+.envrc
