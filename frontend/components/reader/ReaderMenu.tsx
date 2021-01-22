@@ -12,14 +12,18 @@ import styles from './ReaderMenu.css'
 import { Grid } from '@material-ui/core';
 
 interface Props {
+  goBackIndexPage: number
+  goBackIndexQuery: string
   toggleMenu: () => void
   toggleReaderType: () => void
   toggleDirection: () => void
-  backToIndex: () => void
+  backToIndex: (page: number, query: string) => void
   deleteBook: () => void
 }
 
 const ReaderMenu = ({
+  goBackIndexPage,
+  goBackIndexQuery,
   toggleMenu,
   toggleReaderType,
   toggleDirection,
@@ -37,7 +41,7 @@ const ReaderMenu = ({
           <ListItem
             button
             className={styles.menuItem}
-            onClick={backToIndex}
+            onClick={() => backToIndex(goBackIndexPage, goBackIndexQuery)}
           >
             <ListItemIcon>
               <ArrowUpwardIcon className={styles.menuIcon} />

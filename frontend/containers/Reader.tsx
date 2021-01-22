@@ -14,6 +14,7 @@ import {
   clearState,
 } from '../reducers/readerReducer'
 import { push } from 'connected-react-router'
+import * as querystring from 'querystring'
 
 import { Book } from '../models';
 import { RootStore } from '../reducers';
@@ -41,7 +42,7 @@ type Props = {
   toggleQuickBar: () => void
   toggleMenu: () => void
   toggleDirection: () => void
-  backToIndex: () => void
+  backToIndex: (page: number, query: string) => void
   clearReaderState: () => void
   deleteBook: () => void
 }
@@ -53,7 +54,9 @@ const mapStateToProps = (state: RootStore) => ({
   leftToRight: state.reader.leftToRight,
   singleReader: state.reader.singlePage,
   showingQuickBar: state.reader.showingQuickBar,
-  showingMenu: state.reader.showingMenu
+  showingMenu: state.reader.showingMenu,
+  goBackIndexPage: state.books.page,
+  goBackIndexQuery: state.books.query,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -73,8 +76,13 @@ const mapDispatchToProps = (dispatch) => ({
   toggleDirection() {
     dispatch(toggleDirection())
   },
-  backToIndex() {
-    dispatch(push('/'))
+  backToIndex(page: number, query: string) {
+    const queryParams = {}
+    if (page > 0) queryParams['page'] = page
+    if (query) queryParams['q'] = query
+
+    const queryString = querystring.stringify(queryParams)
+    dispatch(push(`/?${queryString}`))
   },
   clearReaderState() {
     dispatch(clearState())
@@ -179,6 +187,8 @@ class ReaderContainer extends React.Component<Props, {}> {
         {
           this.props.showingMenu ?
             <ReaderMenu
+              goBackIndexPage={this.props.goBackIndexPage}
+              goBackIndexQuery={this.props.goBackIndexQuery}
               toggleMenu={this.props.toggleMenu}
               toggleReaderType={this.props.toggleReaderType}
               toggleDirection={this.props.toggleDirection}
