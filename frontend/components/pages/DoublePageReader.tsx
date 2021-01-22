@@ -19,7 +19,7 @@ interface Props {
   singlePageForward: () => void
   doublePageBack: () => void
   doublePageForward: () => void
-  jumpPage: () => void
+  jumpPage: (pageNumber: number) => void
   toggleQuickBar: () => void
   toggleMenu: () => void
 }
@@ -126,6 +126,16 @@ export class DoublePageReader extends React.Component<Props, State> {
       nextPageLater: getBookPageComponent(nextProps.book, nextProps.currentPageNumber + 3),
       currentPageNumber: nextProps.currentPageNumber,
     }
+  }
+
+  componentDidMount() {
+    const params = {}
+    const query = window.location.search
+    query.slice(1).split('&').forEach((q) => {
+      params[q.split('=')[0]] = q.split('=')[1]
+    })
+    const pageNumber = params['page'] ? parseInt(params['page']) : 1
+    this.props.jumpPage(pageNumber)
   }
 
   render() {

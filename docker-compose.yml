@@ -32,8 +32,8 @@ services:
       - minio
     command: 'npm run dev'
     environment:
-      - API_ENDPOINT=localhost:3001
-      - MINIO_ENDPOINT=localhost:9000
+      - API_ENDPOINT
+      - MINIO_ENDPOINT
   mongodb:
     image: mongo:3.2-jessie
     ports:

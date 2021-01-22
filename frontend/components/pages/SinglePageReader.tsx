@@ -17,7 +17,7 @@ interface Props {
   showingMenu: boolean
   singlePageBack: () => void
   singlePageForward: () => void
-  jumpPage: () => void
+  jumpPage: (pageNumber: number) => void
   toggleQuickBar: () => void
   toggleMenu: () => void
 }
@@ -84,6 +84,16 @@ export class SinglePageReader extends React.Component<Props, State> {
       nextPage: nextPage,
       currentPageNumber: nextProps.currentPageNumber,
     }
+  }
+
+  componentDidMount() {
+    const params = {}
+    const query = window.location.search
+    query.slice(1).split('&').forEach((q) => {
+      params[q.split('=')[0]] = q.split('=')[1]
+    })
+    const pageNumber = params['page'] ? parseInt(params['page']) : 1
+    this.props.jumpPage(pageNumber)
   }
 
   render() {

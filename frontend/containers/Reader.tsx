@@ -14,6 +14,7 @@ import {
   clearState,
 } from '../reducers/readerReducer'
 import { push } from 'connected-react-router'
+import * as querystring from 'querystring'
 
 import { Book } from '../models';
 import { RootStore } from '../reducers';
@@ -36,12 +37,12 @@ type Props = {
   singlePageForward: () => void
   doublePageBack: () => void
   doublePageForward: () => void
-  jumpPage: () => void
+  jumpPage: (pageNumber: number) => void
   toggleReaderType: () => void
   toggleQuickBar: () => void
   toggleMenu: () => void
   toggleDirection: () => void
-  backToIndex: () => void
+  backToIndex: (page: number, query: string) => void
   clearReaderState: () => void
   deleteBook: () => void
 }
@@ -53,7 +54,9 @@ const mapStateToProps = (state: RootStore) => ({
   leftToRight: state.reader.leftToRight,
   singleReader: state.reader.singlePage,
   showingQuickBar: state.reader.showingQuickBar,
-  showingMenu: state.reader.showingMenu
+  showingMenu: state.reader.showingMenu,
+  goBackIndexPage: state.books.page,
+  goBackIndexQuery: state.books.query,
 })
 
 const mapDispatchToProps = (dispatch) => ({
@@ -73,8 +76,13 @@ const mapDispatchToProps = (dispatch) => ({
   toggleDirection() {
     dispatch(toggleDirection())
   },
-  backToIndex() {
-    dispatch(push('/'))
+  backToIndex(page: number, query: string) {
+    const queryParams = {}
+    if (page > 0) queryParams['page'] = page
+    if (query) queryParams['q'] = query
+
+    const queryString = querystring.stringify(queryParams)
+    dispatch(push(`/?${queryString}`))
   },
   clearReaderState() {
     dispatch(clearState())
@@ -86,23 +94,36 @@ const mergeProps = (state, { dispatch, ...dispatchProps }, ownProps: Props) => (
   ...dispatchProps,
   ...ownProps,
   singlePageBack() {
-    if (state.currentPageNumber === 0) { return }
-    dispatch(updateCurrentPageNumber(state.currentPageNumber - 1))
+    if (state.currentPageNumber === 1) { return }
+    const newPageNumber = state.currentPageNumber - 1
+    dispatch(push(`${window.location.pathname}?page=${newPageNumber}`))
+    dispatch(updateCurrentPageNumber(newPageNumber))
   },
   singlePageForward() {
-    if (state.currentPageNumber === state.book.pages.length - 1) { return }
-    dispatch(updateCurrentPageNumber(state.currentPageNumber + 1))
+    if (state.currentPageNumber === state.book.pages.length) { return }
+    const newPageNumber = state.currentPageNumber + 1
+    dispatch(push(`${window.location.pathname}?page=${newPageNumber}`))
+    dispatch(updateCurrentPageNumber(newPageNumber))
   },
   doublePageBack() {
-    if (state.currentPageNumber === 0) { return }
-    dispatch(updateCurrentPageNumber(state.currentPageNumber - 2))
+    if (state.currentPageNumber === 1) { return }
+    const newPageNumber = (state.currentPageNumber === 2) ?
+      (state.updateCurrentPageNumber - 1) :
+      (state.updateCurrentPageNumber - 2)
+    dispatch(push(`${window.location.pathname}?page=${newPageNumber}`))
+    dispatch(updateCurrentPageNumber(newPageNumber))
   },
   doublePageForward() {
-    if (state.currentPageNumber === state.book.pages.length - 1) { return }
-    dispatch(updateCurrentPageNumber(state.currentPageNumber + 2))
+    if (state.currentPageNumber === state.book.pages.length) { return }
+    const newPageNumber = (state.currentPageNumber === (state.book.pages.length - 1)) ?
+      (state.updateCurrentPageNumber + 1) :
+      (state.updateCurrentPageNumber + 2)
+    dispatch(push(`${window.location.pathname}?page=${newPageNumber}`))
+    dispatch(updateCurrentPageNumber(newPageNumber))
   },
   jumpPage(pageNumber: number) {
-    if (pageNumber < 0 || pageNumber > state.book.pages.length - 1) { return }
+    if (pageNumber < 1 || pageNumber > state.book.pages.length) { return }
+    dispatch(push(`${window.location.pathname}?page=${pageNumber}`))
     dispatch(updateCurrentPageNumber(pageNumber))
   },
   deleteBook() {
@@ -166,6 +187,8 @@ class ReaderContainer extends React.Component<Props, {}> {
         {
           this.props.showingMenu ?
             <ReaderMenu
+              goBackIndexPage={this.props.goBackIndexPage}
+              goBackIndexQuery={this.props.goBackIndexQuery}
               toggleMenu={this.props.toggleMenu}
               toggleReaderType={this.props.toggleReaderType}
               toggleDirection={this.props.toggleDirection}
