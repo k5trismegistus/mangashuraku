@@ -27,7 +27,7 @@
     "redux-saga": "^0.16",
     "ress": "^1.2",
     "serve": "^10.1",
-    "serialize-to-js": ">= 2.0"
+    "serialize-to-js": ">= 3.0"
   },
   "devDependencies": {
     "@types/axios": "^0.14",
