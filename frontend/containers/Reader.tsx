@@ -86,23 +86,36 @@ const mergeProps = (state, { dispatch, ...dispatchProps }, ownProps: Props) => (
   ...dispatchProps,
   ...ownProps,
   singlePageBack() {
-    if (state.currentPageNumber === 0) { return }
-    dispatch(updateCurrentPageNumber(state.currentPageNumber - 1))
+    if (state.currentPageNumber === 1) { return }
+    const newPageNumber = state.currentPageNumber - 1
+    dispatch(push(`${window.location.pathname}?page=${newPageNumber}`))
+    dispatch(updateCurrentPageNumber(newPageNumber))
   },
   singlePageForward() {
-    if (state.currentPageNumber === state.book.pages.length - 1) { return }
-    dispatch(updateCurrentPageNumber(state.currentPageNumber + 1))
+    if (state.currentPageNumber === state.book.pages.length) { return }
+    const newPageNumber = state.currentPageNumber + 1
+    dispatch(push(`${window.location.pathname}?page=${newPageNumber}`))
+    dispatch(updateCurrentPageNumber(newPageNumber))
   },
   doublePageBack() {
-    if (state.currentPageNumber === 0) { return }
-    dispatch(updateCurrentPageNumber(state.currentPageNumber - 2))
+    if (state.currentPageNumber === 1) { return }
+    const newPageNumber = (state.currentPageNumber === 2) ?
+      (state.updateCurrentPageNumber - 1) :
+      (state.updateCurrentPageNumber - 2)
+    dispatch(push(`${window.location.pathname}?page=${newPageNumber}`))
+    dispatch(updateCurrentPageNumber(newPageNumber))
   },
   doublePageForward() {
-    if (state.currentPageNumber === state.book.pages.length - 1) { return }
-    dispatch(updateCurrentPageNumber(state.currentPageNumber + 2))
+    if (state.currentPageNumber === state.book.pages.length) { return }
+    const newPageNumber = (state.currentPageNumber === (state.book.pages.length - 1)) ?
+      (state.updateCurrentPageNumber + 1) :
+      (state.updateCurrentPageNumber + 2)
+    dispatch(push(`${window.location.pathname}?page=${newPageNumber}`))
+    dispatch(updateCurrentPageNumber(newPageNumber))
   },
   jumpPage(pageNumber: number) {
-    if (pageNumber < 0 || pageNumber > state.book.pages.length - 1) { return }
+    if (pageNumber < 1 || pageNumber > state.book.pages.length) { return }
+    dispatch(push(`${window.location.pathname}?page=${pageNumber}`))
     dispatch(updateCurrentPageNumber(pageNumber))
   },
   deleteBook() {

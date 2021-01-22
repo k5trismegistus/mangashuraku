@@ -65,14 +65,18 @@ class QuickBar extends React.Component<Props> {
           {thumbnails.map((thumbnailPath, index) => (
             <div
               key={thumbnailPath}
-              onClick={(e) => jumpPage(index)}
+              // The page number to display starts from 1
+              // The index of first element of list of Javascript is 0
+              onClick={(e) => jumpPage(index + 1)}
               className={styles.thumbnailContainer}
             >
               <img
                 src={`${ThumbnailBasePath}/${thumbnailPath}`}
-                className={index === currentPageNumber ? styles.currentPage : ''}
+                className={index === currentPageNumber - 1 ? styles.currentPage : ''}
               />
               <div className={styles.pageNumber}>
+                {/* The page number to display starts from 1 */}
+                {/* The index of first element of list of Javascript is 0 */}
                 <span>{index + 1}</span>
               </div>
             </div>

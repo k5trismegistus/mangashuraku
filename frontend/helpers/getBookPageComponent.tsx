@@ -5,12 +5,14 @@ import { BookPage } from '../components/reader/BookPage'
 const PageBasePath = `http://${process.env.MINIO_ENDPOINT}/mangashuraku`
 
 const getBookPageComponent = (book: Book, pageNumber: number) {
-  if (pageNumber < 0 || pageNumber > book.pages.length - 1) {
+  if (pageNumber < 1 || pageNumber > book.pages.length) {
     return null
   }
 
   return <BookPage
-    imgSrc={`${PageBasePath}/${book.pages[pageNumber]}`}
+    // The page number to display starts from 1
+    // The index of first element of list of Javascript is 0
+    imgSrc={`${PageBasePath}/${book.pages[pageNumber - 1]}`}
   />
 }
 

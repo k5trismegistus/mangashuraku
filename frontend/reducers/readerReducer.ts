@@ -11,7 +11,7 @@ export interface ReaderStore {
 }
 
 export const initialReaderStore = {
-  currentPageNumber: 0,
+  currentPageNumber: 1,
   leftToRight: false,
   singlePage: true,
   showingQuickBar: false,
