@@ -108,16 +108,16 @@ const mergeProps = (state, { dispatch, ...dispatchProps }, ownProps: Props) => (
   doublePageBack() {
     if (state.currentPageNumber === 1) { return }
     const newPageNumber = (state.currentPageNumber === 2) ?
-      (state.updateCurrentPageNumber - 1) :
-      (state.updateCurrentPageNumber - 2)
+      (state.currentPageNumber - 1) :
+      (state.currentPageNumber - 2)
     dispatch(push(`${window.location.pathname}?page=${newPageNumber}`))
     dispatch(updateCurrentPageNumber(newPageNumber))
   },
   doublePageForward() {
     if (state.currentPageNumber === state.book.pages.length) { return }
     const newPageNumber = (state.currentPageNumber === (state.book.pages.length - 1)) ?
-      (state.updateCurrentPageNumber + 1) :
-      (state.updateCurrentPageNumber + 2)
+      (state.currentPageNumber + 1) :
+      (state.currentPageNumber + 2)
     dispatch(push(`${window.location.pathname}?page=${newPageNumber}`))
     dispatch(updateCurrentPageNumber(newPageNumber))
   },
