@@ -14,7 +14,7 @@
   "dependencies": {
     "@material-ui/core": "^4.0",
     "@material-ui/icons": "^4.0",
-    "axios": "^0.18.1",
+    "axios": "^0.21.1",
     "connected-react-router": "^4.5",
     "history": "^4.10.1",
     "material-ui": "^0.20",
@@ -27,7 +27,7 @@
     "redux-saga": "^0.16",
     "ress": "^1.2",
     "serve": "^10.1",
-    "serialize-to-js": ">= 2.0"
+    "serialize-to-js": ">= 3.0"
   },
   "devDependencies": {
     "@types/axios": "^0.14",

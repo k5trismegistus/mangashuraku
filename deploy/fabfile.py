@@ -17,7 +17,7 @@ def compress(ctx):
     run(f'tar --exclude node_modules --exclude dist --exclude .cache -czf /tmp/{COMPRESSED_NAME} src/api src/frontend src/docker-compose.prod.yml')
 
 @task
-def rebuild_container(ctx):
+def rebuildcontainer(ctx):
     production(ctx)
     with Connection(ctx.host, user=ctx.user, connect_kwargs=ctx.connect_kwargs) as conn:
         conn.run(f'cd {WORKING_DIR}; docker-compose -f docker-compose.prod.yml stop')
@@ -29,6 +29,9 @@ def rebuild(ctx):
     production(ctx)
     with Connection(ctx.host, user=ctx.user, connect_kwargs=ctx.connect_kwargs) as conn:
         conn.run(f'cd {WORKING_DIR}; docker-compose -f docker-compose.prod.yml run --rm api npm run build')
+        conn.run(f'cd {WORKING_DIR}; docker-compose -f docker-compose.prod.yml run --rm frontend rm -R dist/')
+        conn.run(f'mkdir {WORKING_DIR}/frontend/dist')
+        conn.run(f'cd {WORKING_DIR}; docker-compose -f docker-compose.prod.yml run --rm frontend rm -R .cache/')
         conn.run(f'cd {WORKING_DIR}; docker-compose -f docker-compose.prod.yml run --rm frontend npm run build')
         conn.run(f'cp {WORKING_DIR}/frontend/serve.json {WORKING_DIR}/frontend/dist')
 

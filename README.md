@@ -10,8 +10,9 @@ This program does not contain feature that download illegally uploaded comic boo
 
 ## Get started
 
-Set server IP address, data directory and so on in docker-compsoe.prod.yml.
+Set server IP address, data directory and so on in environment.
+(Direnv is useful)
 
 ```
-$ docker-compose run --rm  fab deploy
+$ docker-compose run --rm deploy fab deploy
 ```
