@@ -1,10 +1,27 @@
 import React, { useState } from 'react'
 
+import ComicBookPage from './ComicBookPage'
+
+import { ComicBook } from '../../types'
+
 import styles from './SinglePageReader.module.css'
+import Comic from '../../pages/comics/[id]'
 
+// Helper function
+const getBookPageComponent = (comic: ComicBook, pageNumber: number) => {
+  if (pageNumber < 1 || pageNumber > comic.pages.length) {
+    return null
+  }
 
-const SinglePageReader = ({ book }) => {
-  const [currentPage, setCurrentPage] = useState(0)
+  return <ComicBookPage
+    // The page number to display starts from 1
+    // The index of first element of list of Javascript is 0
+    imgSrc={`http://192.168.11.12:8000/mangashuraku/${comic.pages[pageNumber - 1]}`}
+  />
+}
+
+const SinglePageReader = ({ comic }) => {
+  const [currentPageNumber, setCurrentPageNumber] = useState(1)
 
   return (
     <div>
@@ -20,7 +37,7 @@ const SinglePageReader = ({ book }) => {
       <div
         className={styles.rightButton}
       />
-      {currentPage}
+      {getBookPageComponent(comic, currentPageNumber)}
 
     </div>
   )

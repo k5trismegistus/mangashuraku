@@ -6,7 +6,7 @@ const Comic =  ({ comic }) => {
   return (
     <div>
       <SinglePageReader
-        comic="comic"
+        comic={comic}
       />
     </div>
   )
