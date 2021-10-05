@@ -5,7 +5,6 @@ import ComicBookPage from './ComicBookPage'
 import { ComicBook } from '../../types'
 
 import styles from './SinglePageReader.module.css'
-import Comic from '../../pages/comics/[id]'
 
 // Helper function
 const getBookPageComponent = (comic: ComicBook, pageNumber: number) => {
@@ -20,8 +19,28 @@ const getBookPageComponent = (comic: ComicBook, pageNumber: number) => {
   />
 }
 
-const SinglePageReader = ({ comic }) => {
-  const [currentPageNumber, setCurrentPageNumber] = useState(1)
+type Props = {
+  comic: ComicBook
+  currentPageNumber: number,
+  goPreviousPage: () => {}
+  goForwardPage: () => {}
+}
+
+const SinglePageReader = ({
+  comic,
+  currentPageNumber,
+  goPreviousPage,
+  goForwardPage,
+}: Props) => {
+
+  // まずは左右切替無しで、つぎのページに行くだけ
+  const onClickLeft = () => {
+    goForwardPage()
+  }
+  // まずは左右切替無しで、前のページに行くだけ
+  const onClickRight = () => {
+    goPreviousPage()
+  }
 
   return (
     <div>
@@ -29,14 +48,17 @@ const SinglePageReader = ({ comic }) => {
         className={styles.topButton}
       />
       <div
+        onClick={onClickLeft}
         className={styles.leftButton}
       />
       <div
         className={styles.centerButton}
       />
       <div
+        onClick={onClickRight}
         className={styles.rightButton}
       />
+
       {getBookPageComponent(comic, currentPageNumber)}
 
     </div>
