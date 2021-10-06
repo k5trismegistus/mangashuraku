@@ -43,7 +43,7 @@ const SinglePageReader = ({
   }
 
   return (
-    <div>
+    <div className={styles.singlePageReaderContainer}>
       <div
         className={styles.topButton}
       />

@@ -9,10 +9,10 @@ const ComicBookPage = ({
   imgSrc
 }: Props) => (
   <div className={styles.pageContainer}>
-    <img
+    <div
       className={styles.pageImage}
-      src={imgSrc}
-    />
+      style={{backgroundImage: `url(${imgSrc})`}}
+    ></div>
   </div>
 )
 
