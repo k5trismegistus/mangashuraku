@@ -22,8 +22,8 @@ const getBookPageComponent = (comic: ComicBook, pageNumber: number) => {
 type Props = {
   comic: ComicBook
   currentPageNumber: number,
-  goPreviousPage: () => {}
-  goForwardPage: () => {}
+  goPreviousPage: () => void
+  goForwardPage: () => void
 }
 
 const SinglePageReader = ({
