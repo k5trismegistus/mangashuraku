@@ -3,20 +3,37 @@ import React, { useState } from 'react'
 import { apiClient } from "../../utils/apiClient"
 
 import SinglePageReader from '../../components/comic_reader/SinglePageReader'
+import { ComicBook } from '../../types'
+import { useRouter } from 'next/dist/client/router'
 
-const Comic =  ({ comic }) => {
-  const [currentPageNumber, setCurrentPageNumber] = useState(1)
+type Props = {
+  comic: ComicBook
+  initialPageNumber: number
+}
+
+const Comic =  ({ comic, initialPageNumber }: Props) => {
+  const router = useRouter()
+
+  const [currentPageNumber, setCurrentPageNumber] = useState(initialPageNumber)
   const goPreviousPage = () => {
     if (currentPageNumber === 0) {
       return
     }
-    setCurrentPageNumber(currentPageNumber - 1)
+    const newPageNumber = currentPageNumber - 1
+    changePage(newPageNumber)
   }
+
   const goForwardPage = () => {
     if (currentPageNumber === comic.pages.length) {
       return
     }
-    setCurrentPageNumber(currentPageNumber + 1)
+    const newPageNumber = currentPageNumber + 1
+    changePage(newPageNumber)
+  }
+
+  const changePage = (newPageNumber: number) => {
+    router.push(`${window.location.pathname}?page=${newPageNumber}`)
+    setCurrentPageNumber(newPageNumber)
   }
 
   return (
@@ -31,9 +48,13 @@ const Comic =  ({ comic }) => {
   )
 }
 
-export const getServerSideProps = async (ctx) => {
-  const comic = await apiClient.getComic({ id: '5bdc501b83e7550010fd328c' })
-  return { props: { comic } }
+
+export const getServerSideProps = async ({ query }): Promise<{props: Props}> => {
+  const comicId = query.id
+  const initialPageNumber = (query.page) ?
+    parseInt(query.page) : 1
+  const comic = await apiClient.getComic({ id: comicId })
+  return { props: { comic, initialPageNumber } }
 }
 
 export default Comic
