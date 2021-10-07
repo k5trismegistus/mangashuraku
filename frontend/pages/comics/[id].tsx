@@ -4,7 +4,8 @@ import { useRouter } from 'next/dist/client/router'
 import { apiClient } from "../../utils/apiClient"
 
 import SinglePageReader from '../../components/comic_reader/SinglePageReader'
-import QuickBar from '../../components/comic_reader//QuickBar'
+import QuickBar from '../../components/comic_reader/QuickBar'
+import ReaderMenu from '../../components/comic_reader/ReaderMenu'
 
 import { ComicBook } from '../../types'
 
@@ -20,6 +21,8 @@ const Comic =  ({ comic, initialPageNumber }: Props) => {
 
   const [currentPageNumber, setCurrentPageNumber] = useState(initialPageNumber)
   const [showQuickBar, setShowQuickBar] = useState(false)
+  const [showReaderMenu, setShowReaderMenu] = useState(false)
+
   const goPreviousPage = () => {
     if (currentPageNumber === 0) {
       return
@@ -45,10 +48,15 @@ const Comic =  ({ comic, initialPageNumber }: Props) => {
     setShowQuickBar(!showQuickBar)
   }
 
+  const toggleReaderMenu = () => {
+    setShowReaderMenu(!showReaderMenu)
+  }
+
   return (
     <div className={styles.root}>
 
       <div
+        onClick={toggleReaderMenu}
         className={styles.topButton}
       />
       <div
@@ -77,6 +85,19 @@ const Comic =  ({ comic, initialPageNumber }: Props) => {
           leftToRight={false}
           currentPageNumber={currentPageNumber}
           changePage={changePage}
+        />
+      </div>
+
+      <div
+        className={styles.readerMenu}
+        style={showReaderMenu ? null: {display: 'none'}}
+      >
+        <ReaderMenu
+          toggleMenu={toggleReaderMenu}
+          toggleReaderType={() => {}}  // さいしょは実装せず
+          toggleDirection={() => {}} //さいしょはじっそうせず
+          backToIndex={() => {}} // TODO
+          deleteComicBook={() => {}}
         />
       </div>
     </div>
