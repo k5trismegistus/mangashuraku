@@ -17,19 +17,19 @@ const QuickBar = ({thumbnails, leftToRight, currentPageNumber, changePage}: Prop
   const jumpFirstPage = () => {
     console.log(quickBarRef.current.scrollWidth)
     console.log(quickBarRef.current.scrollLeft)
-    const pos = leftToRight ? 0 : quickBarRef.current.scrollWidth
+    const pos = leftToRight ? -1 * quickBarRef.current.scrollWidth : 0
     quickBarRef.current.scrollLeft = pos
   }
 
   const jumpCurrentpage =() => {
     const pos = leftToRight ?
-      (currentPageNumber * 256 + 128) - (quickBarRef.current.clientWidth / 2) :
-      quickBarRef.current.scrollWidth - (currentPageNumber * 256 + 128) - (quickBarRef.current.clientWidth / 2)
+    (quickBarRef.current.clientWidth / 2) - quickBarRef.current.scrollWidth + (currentPageNumber * 256 + 128) :
+      (quickBarRef.current.clientWidth / 2) - (currentPageNumber * 256)
     quickBarRef.current.scrollLeft = pos
   }
 
   const jumpLastPage =() => {
-    const pos = leftToRight ? quickBarRef.current.scrollWidth : 0
+    const pos = leftToRight ?  0 : -1 * quickBarRef.current.scrollWidth
     quickBarRef.current.scrollLeft = pos
   }
 
@@ -39,6 +39,9 @@ const QuickBar = ({thumbnails, leftToRight, currentPageNumber, changePage}: Prop
         style={{ flexDirection: (leftToRight ? 'row' : 'row-reverse')}}
         className={styles.controlls}
       >
+        <Button onClick={() => { console.log(quickBarRef.current.scrollLeft)} }>
+          Show
+        </Button>
         <Button onClick={() => jumpFirstPage()}>
           Jump to First Page
         </Button>
