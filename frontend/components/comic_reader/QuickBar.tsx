@@ -15,15 +15,13 @@ const QuickBar = ({thumbnails, leftToRight, currentPageNumber, changePage}: Prop
   const quickBarRef = useRef(null)
 
   const jumpFirstPage = () => {
-    console.log(quickBarRef.current.scrollWidth)
-    console.log(quickBarRef.current.scrollLeft)
     const pos = leftToRight ? -1 * quickBarRef.current.scrollWidth : 0
     quickBarRef.current.scrollLeft = pos
   }
 
   const jumpCurrentpage =() => {
     const pos = leftToRight ?
-    (quickBarRef.current.clientWidth / 2) - quickBarRef.current.scrollWidth + (currentPageNumber * 256 + 128) :
+    (quickBarRef.current.clientWidth / 2) - quickBarRef.current.scrollWidth + (currentPageNumber * 256) :
       (quickBarRef.current.clientWidth / 2) - (currentPageNumber * 256)
     quickBarRef.current.scrollLeft = pos
   }
