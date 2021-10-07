@@ -1,5 +1,6 @@
 import React, { useState } from 'react'
 
+import QuickBar from './QuickBar'
 import ComicBookPage from './ComicBookPage'
 
 import { ComicBook } from '../../types'
@@ -22,43 +23,14 @@ const getBookPageComponent = (comic: ComicBook, pageNumber: number) => {
 type Props = {
   comic: ComicBook
   currentPageNumber: number,
-  goPreviousPage: () => void
-  goForwardPage: () => void
 }
 
 const SinglePageReader = ({
   comic,
   currentPageNumber,
-  goPreviousPage,
-  goForwardPage,
 }: Props) => {
-
-  // まずは左右切替無しで、つぎのページに行くだけ
-  const onClickLeft = () => {
-    goForwardPage()
-  }
-  // まずは左右切替無しで、前のページに行くだけ
-  const onClickRight = () => {
-    goPreviousPage()
-  }
-
   return (
     <div className={styles.singlePageReaderContainer}>
-      <div
-        className={styles.topButton}
-      />
-      <div
-        onClick={onClickLeft}
-        className={styles.leftButton}
-      />
-      <div
-        className={styles.centerButton}
-      />
-      <div
-        onClick={onClickRight}
-        className={styles.rightButton}
-      />
-
       {getBookPageComponent(comic, currentPageNumber)}
 
     </div>

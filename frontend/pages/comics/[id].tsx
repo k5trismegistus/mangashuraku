@@ -1,10 +1,14 @@
 import React, { useState } from 'react'
+import { useRouter } from 'next/dist/client/router'
 
 import { apiClient } from "../../utils/apiClient"
 
 import SinglePageReader from '../../components/comic_reader/SinglePageReader'
+import QuickBar from '../../components/comic_reader//QuickBar'
+
 import { ComicBook } from '../../types'
-import { useRouter } from 'next/dist/client/router'
+
+import styles from './[id].module.css'
 
 type Props = {
   comic: ComicBook
@@ -15,6 +19,7 @@ const Comic =  ({ comic, initialPageNumber }: Props) => {
   const router = useRouter()
 
   const [currentPageNumber, setCurrentPageNumber] = useState(initialPageNumber)
+  const [showQuickBar, setShowQuickBar] = useState(false)
   const goPreviousPage = () => {
     if (currentPageNumber === 0) {
       return
@@ -36,18 +41,47 @@ const Comic =  ({ comic, initialPageNumber }: Props) => {
     setCurrentPageNumber(newPageNumber)
   }
 
+  const toggleQuickBar = () => {
+    setShowQuickBar(!showQuickBar)
+  }
+
   return (
-    <div>
+    <div className={styles.root}>
+
+      <div
+        className={styles.topButton}
+      />
+      <div
+        onClick={goPreviousPage}
+        className={styles.leftButton}
+      />
+      <div
+        onClick={toggleQuickBar}
+        className={styles.centerButton}
+      />
+      <div
+        onClick={goForwardPage}
+        className={styles.rightButton}
+      />
       <SinglePageReader
         comic={comic}
         currentPageNumber={currentPageNumber}
-        goPreviousPage={goPreviousPage}
-        goForwardPage={goForwardPage}
       />
+
+      <div
+        className={styles.quickBar}
+        style={showQuickBar ? null: {display: 'none'}}
+      >
+        <QuickBar
+          thumbnails={comic.thumbnails}
+          leftToRight={false}
+          currentPageNumber={currentPageNumber}
+          changePage={changePage}
+        />
+      </div>
     </div>
   )
 }
-
 
 export const getServerSideProps = async ({ query }): Promise<{props: Props}> => {
   const comicId = query.id
