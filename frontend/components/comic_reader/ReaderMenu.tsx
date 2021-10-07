@@ -1,6 +1,6 @@
 import * as React from 'react'
 
-import { List, ListItem, Grid } from '@mui/material'
+import { List, ListItem, ListItemIcon, ListItemText, Grid } from '@mui/material'
 import { ArrowUpward, ImportContacts, CompareArrows, DeleteForever, Clear } from '@mui/icons-material'
 import styles from './ReaderMenu.module.css'
 
@@ -30,58 +30,58 @@ const ReaderMenu = ({
           <ListItem
             button
             className={styles.menuItem}
-            onClick={() => backToIndex(goBackIndexPage, goBackIndexQuery)}
+            onClick={() => backToIndex()}
           >
-            <ListItem>
-              <ArrowUpward className={styles.menu} />
-            </ListItem>
-            <span
+            <ListItemIcon>
+              <ArrowUpward className={styles.menuIcon} />
+            </ListItemIcon>
+            <ListItemText
               className={styles.listItemText}
               >
               Back to Library
-            </span>
+            </ListItemText>
           </ListItem>
           <ListItem
             button
             onClick={toggleReaderType}
             className={styles.menuItem}
           >
-            <ListItem>
+            <ListItemIcon>
               <ImportContacts className={styles.menuIcon} />
-            </ListItem>
-            <span
+            </ListItemIcon>
+            <ListItemText
               className={styles.listItemText}
               >
               Change reader type
-            </span>
+            </ListItemText>
           </ListItem>
           <ListItem
             button
             onClick={toggleDirection}
             className={styles.menuItem}
           >
-            <ListItem>
-              <CompareArrows className={styles.menu} />
-            </ListItem>
-            <span
+            <ListItemIcon>
+              <CompareArrows className={styles.menuIcon} />
+            </ListItemIcon>
+            <ListItemText
               className={styles.listItemText}
               >
               Change reading direction
-            </span>
+            </ListItemText>
           </ListItem>
           <ListItem
             button
             onClick={deleteComicBook}
             className={styles.menuItem}
           >
-            <ListItem>
-              <DeleteForever className={styles.menu} />
-            </ListItem>
-            <span
+            <ListItemIcon>
+              <DeleteForever className={styles.menuIcon} />
+            </ListItemIcon>
+            <ListItemText
               className={styles.listItemText}
             >
               Delete this book
-            </span>
+            </ListItemText>
           </ListItem>
         </List>
       </Grid>
@@ -92,7 +92,7 @@ const ReaderMenu = ({
       onClick={toggleMenu}
       className={styles.closeButton}
     >
-      <Clear className={styles.closeButton} />
+      <Clear className={styles.closeButtonIcon} />
     </div>
   </div>
 )
