@@ -1,0 +1,35 @@
+.container {
+  padding: 0 4rem;
+}
+
+.tileLinkWrapper {
+  display: block;
+}
+
+.searchField {
+  display: flex;
+  justify-content: center;
+}
+
+.pager {
+  margin-top: 2rem;
+  display: flex;
+  width: 100%;
+  position: relative;
+  justify-content: center;
+  align-items: center;
+}
+
+.backButton {
+  position: absolute;
+  left: 0;
+}
+
+.pageNumber {
+  margin-right: 2rem;
+}
+
+.forwardButton {
+  position: absolute;
+  right: 0;
+}
