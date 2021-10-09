@@ -24,7 +24,7 @@ const Comic =  ({ comic, initialPageNumber }: Props) => {
   const [showReaderMenu, setShowReaderMenu] = useState(false)
 
   const goPreviousPage = () => {
-    if (currentPageNumber === 0) {
+    if (currentPageNumber <= 1) {
       return
     }
     const newPageNumber = currentPageNumber - 1

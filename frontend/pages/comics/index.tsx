@@ -1,4 +1,5 @@
 import React, { useState } from 'react'
+import { useRouter } from 'next/dist/client/router'
 
 import { apiClient } from "../../utils/apiClient"
 
@@ -28,6 +29,7 @@ const ComicTop = ({
   initialPage,
   initialSearchQuery,
 }: Props) => {
+  const router = useRouter()
 
   const [comicBooks, setComicBooks] = useState(initialShowingComicBooks)
   const [totalComicBooks, setTotalComicBooks] = useState(initialTotalComicBooks)
@@ -40,6 +42,13 @@ const ComicTop = ({
     setSearchQuery(searchQuery)
     setComicBooks(comicBooksRes.comicBooks)
     setTotalComicBooks(comicBooksRes.count)
+
+    const params = {}
+    if (page) params.page = page
+    if (searchQuery) params.q = searchQuery
+    const paramsObj = new URLSearchParams(params)
+
+    router.push(`${window.location.pathname}?${paramsObj.toString()}`)
   }
 
   return (
@@ -65,10 +74,12 @@ const ComicTop = ({
                 key={comicBook._id}
                 xs={3}
               >
-                <Link href={`/books/${comicBook._id}`}>
-                  <ComicBookTile
-                    comicBook={comicBook}
-                  />
+                <Link href={`/comics/${comicBook._id}`} passHref>
+                  <a className={styles.linkTileWrapper}>
+                    <ComicBookTile
+                      comicBook={comicBook}
+                    />
+                  </a>
                 </Link>
               </Grid>
             ))
@@ -124,7 +135,7 @@ export const getServerSideProps = async ({ query }): Promise<{props: Props}> => 
   const searchQuery = (query.q) ?
     query.q : ''
   const initialPageNumber = (query.page) ?
-    parseInt(query.page) : 1
+    Math.min(parseInt(query.page) - 1, 0) : 0
   const comicBooksRes = await apiClient.indexBooks({ searchQuery, page: initialPageNumber })
   return { props: {
     initialShowingComicBooks: comicBooksRes.comicBooks,

@@ -2,6 +2,10 @@
   padding: 0 4rem;
 }
 
+.tileLinkWrapper {
+  display: block;
+}
+
 .searchField {
   display: flex;
   justify-content: center;
