@@ -83,7 +83,7 @@ const ComicTop = ({
           {
             page > 0 ?
               <Button
-                onClick={() => fetchComicBookList({ page: page - 1, query: searchQuery }) }
+                onClick={() => fetchComicBookList({ page: page - 1, searchQuery }) }
                 size="large"
                 variant="contained"
                 className={styles.backButton}
@@ -94,7 +94,7 @@ const ComicTop = ({
           <p className={styles.pageNumber}>{page + 1} of {Math.ceil(totalComicBooks / PER_PAGE)}</p>
           <Select
             value={page}
-            onChange={(e) => fetchComicBookList({ page: e.target.value, query: searchQuery }) }
+            onChange={(e) => fetchComicBookList({ page: e.target.value, searchQuery }) }
           >
             {
               Array.from(Array(Math.ceil(totalComicBooks / PER_PAGE)), (v, k) => k).map((i) => (
@@ -106,7 +106,7 @@ const ComicTop = ({
           {
             page < Math.ceil(totalComicBooks / PER_PAGE) - 1 ?
               <Button
-                onClick={() => fetchComicBookList({ page: page + 1, query: searchQuery }) }
+                onClick={() => fetchComicBookList({ page: page + 1, searchQuery }) }
                 size="large"
                 variant="contained"
                 className={styles.forwardButton}

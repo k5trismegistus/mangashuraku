@@ -1,8 +1,9 @@
 import { useRef } from 'react'
+
+import { getComicBookThumbnailUrl } from '../../utils/urlBuilder'
+
 import Button from '@mui/material/Button'
 import styles from './QuickBar.module.css'
-
-const ThumbnailBasePath = `http://192.168.11.12:8000/mangashuraku-thumbnail`
 
 type Props = {
   thumbnails: Array<string>
@@ -37,9 +38,6 @@ const QuickBar = ({thumbnails, leftToRight, currentPageNumber, changePage}: Prop
         style={{ flexDirection: (leftToRight ? 'row' : 'row-reverse')}}
         className={styles.controlls}
       >
-        <Button onClick={() => { console.log(quickBarRef.current.scrollLeft)} }>
-          Show
-        </Button>
         <Button onClick={() => jumpFirstPage()}>
           Jump to First Page
         </Button>
@@ -64,7 +62,7 @@ const QuickBar = ({thumbnails, leftToRight, currentPageNumber, changePage}: Prop
             className={styles.thumbnailContainer}
           >
             <img
-              src={`${ThumbnailBasePath}/${thumbnailPath}`}
+              src={getComicBookThumbnailUrl(thumbnailPath)}
               className={index === currentPageNumber - 1 ? styles.currentPage : styles.otherPage}
             />
             <div className={styles.pageNumber}>

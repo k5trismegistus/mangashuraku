@@ -1,4 +1,7 @@
 import * as React from 'react'
+
+import { getComicBookThumbnailUrl  } from '../../utils/urlBuilder'
+
 import { ComicBook } from '../../types';
 import {
   Card,
@@ -10,7 +13,6 @@ import {
 
 import styles from './ComicBookTile.module.css'
 
-const ThumbnailBasePath = `http://${process.env.MINIO_ENDPOINT}/mangashuraku-thumbnail`
 
 type Props = {
   comicBook: ComicBook
@@ -23,7 +25,7 @@ const ComicBookTile = ({
      <CardActionArea>
         <CardMedia
           className={styles.cover}
-          image={`${ThumbnailBasePath}/${comicBook.coverThumbnail}`}
+          image={getComicBookThumbnailUrl(comicBook.coverThumbnail)}
           title="cover"
         />
         <CardContent>

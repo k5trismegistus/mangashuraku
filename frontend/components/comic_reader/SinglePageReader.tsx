@@ -1,6 +1,7 @@
 import React, { useState } from 'react'
 
-import QuickBar from './QuickBar'
+import { getComicBookPagelUrl } from '../../utils/urlBuilder'
+
 import ComicBookPage from './ComicBookPage'
 
 import { ComicBook } from '../../types'
@@ -16,7 +17,7 @@ const getBookPageComponent = (comic: ComicBook, pageNumber: number) => {
   return <ComicBookPage
     // The page number to display starts from 1
     // The index of first element of list of Javascript is 0
-    imgSrc={`http://192.168.11.12:8000/mangashuraku/${comic.pages[pageNumber - 1]}`}
+    imgSrc={getComicBookPagelUrl(comic.pages[pageNumber - 1])}
   />
 }
 
