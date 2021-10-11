@@ -1,15 +1,10 @@
 
-import { Book, IBookParameter } from '../../models/book'
-import { ObjectId } from 'mongodb';
+import { BookParams, Book } from '../../models/book'
 
 const mockBook = new Book({
-  id: new ObjectId('testtesttest'),
+  _id: 'testtesttest',
   archiveUUID: 'test',
   originalName: 'test',
-  title: '',
-  authorIds: [],
-  organizationIds: [],
-  genreIds: [],
   pages: [],
   thumbnails: [],
   cover: '',
@@ -21,20 +16,28 @@ const mockBooks = [
   mockBook
 ]
 
-export const insertBook = (params: IBookParameter): Promise<Book> => {
-  return new Promise((resolve, reject) => {
-    resolve(mockBook)
-  })
-}
+export class BooksRepository {
+  async insertBook(_): Promise<Book> {
+    return new Promise((resolve, reject) => {
+      resolve(mockBook)
+    })
+  }
 
-export const indexBook = async (params) => {
-  return { total: 1, books: mockBooks }
-}
+  async indexBook(_) {
+    return new Promise((resolve, reject) => {
+      resolve({ total: 1, books: mockBooks })
+    })
+  }
 
-export const findBook = async (params) => {
-  return mockBook
-}
+  async findBook (_) {
+    return new Promise((resolve, reject) => {
+      resolve(mockBook)
+    })
+  }
 
-export const deleteBook = async ({ bookId }) => {
-  return
+  async deleteBook (_) {
+    return new Promise((resolve, reject) => {
+      resolve({})
+    })
+  }
 }

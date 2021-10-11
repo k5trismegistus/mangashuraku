@@ -1,12 +1,11 @@
-import { Express, Router } from 'express'
-import { healthApiRouter } from './healthApi'
-import { bookApiRouter } from './bookApi'
+import { Router } from 'express'
+import { HealthApiRouter } from './healthApi'
+import { BooksApiRouter } from './bookApi'
 
-const initApi = (app: Express) => {
-  const apiRouter = Router()
-  apiRouter.use('/health', healthApiRouter)
-  apiRouter.use('/books', bookApiRouter)
-  app.use('/api', apiRouter)
+export const ApiRouter = (repositories) => {
+  const router = Router()
+  router.use('/health', HealthApiRouter({}))
+  router.use('/books', BooksApiRouter(repositories.booksRepository))
+
+  return router
 }
-
-export { initApi }

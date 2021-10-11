@@ -1,31 +1,19 @@
-import { MongoClient, Db } from 'mongodb'
+import { MongoClient } from 'mongodb'
 
-const url = `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}`
+const mongodbUrl = `mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}`
+const client = new MongoClient(mongodbUrl)
 
-let mongodb: Db
+let dbConnection
 
-MongoClient.connect(
-  url,
-  {
-    poolSize: 5,
-  },
-  (err, client) => {
-    if (err) {
-      throw Error
+export const connectToServer = (callback) => {
+  client.connect((err, db) => {
+    if (err || !db) {
+      return callback(err, null)
     }
-    mongodb = client.db(process.env.MONGODB_DB)
-  }
-)
 
-export const mongoClientInitialized = async () => {
-  return new Promise((resolve, reject) => {
-    const interval = setInterval(() => {
-      if (mongodb) {
-        clearInterval(interval)
-        resolve()
-      }
-    }, 100)
+    dbConnection = db.db(process.env.MONGODB_DB)
+    console.log("Successfully connected to MongoDB.")
+
+    return callback(null, dbConnection)
   })
 }
-
-export { mongodb }

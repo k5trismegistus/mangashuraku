@@ -1,9 +1,10 @@
 import { Router } from 'express'
 
-const healthApiRouter = Router()
+export const HealthApiRouter = (_): Router => {
+  const router = Router()
+  router.get('/', async (req, res) => {
+    res.send({ message: 'OK' })
+  })
 
-healthApiRouter.get('/', async (req, res) => {
-  res.send({ message: 'OK' })
-})
-
-export { healthApiRouter }
+  return router
+}

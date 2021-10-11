@@ -1,39 +1,26 @@
-import { ObjectId, FindOneOptions } from 'mongodb'
 import { deleteImage, deleteThumbnail } from '../utils/minioClient'
 
-export interface IBookParameter {
+export type BookParams = {
+  _id: string
   archiveUUID: string
   originalName: string
-  title: string
-  authorIds: ObjectId[]
-  organizationIds: ObjectId[]
-  genreIds: ObjectId[]
   pages: string[]
   thumbnails: string[]
   cover: string
   coverThumbnail: string
   createdAt: Date
 }
-
-export interface IBook extends IBookParameter {
-  id: ObjectId
-}
-
-export class Book implements IBook {
-  id: ObjectId
+export class Book {
+  _id: string
   archiveUUID: string
   originalName: string
-  title: string
-  authorIds: ObjectId[]
-  organizationIds: ObjectId[]
-  genreIds: ObjectId[]
   pages: string[]
   thumbnails: string[]
   cover: string
   coverThumbnail: string
   createdAt: Date
 
-  constructor(params: IBook) {
+  constructor(params: BookParams) {
     Object.assign(this, params)
   }
 
@@ -46,21 +33,4 @@ export class Book implements IBook {
       deleteThumbnail(thumbnailKey)
     })
   }
-}
-
-export const BookIndexFields: FindOneOptions = {
-  projection: {
-    // _id: 1,
-    // archiveUUID: 1,
-    // originalName: 1,
-    // title: 1,
-    // authorIds: 1,
-    // organizationIds: 1,
-    // genreId: 1,
-    pages: 0,
-    thumbnails: 0,
-    // cover: 1,
-    // coverThumbnail: 1,
-    // createdAt: 1
-  },
 }
