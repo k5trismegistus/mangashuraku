@@ -6,7 +6,7 @@ export const genThumbnail = (
   originalPath: string,
   dstDir: string,
   width: number
-) => {
+): Promise<any> => {
   return new Promise((resolve, reject) => {
     const filename = basename(originalPath)
 
@@ -18,7 +18,7 @@ export const genThumbnail = (
       },
       (err: Error, result: any) => {
         if (err) return reject(err)
-        resolve()
+        resolve(result)
       }
     )
   })

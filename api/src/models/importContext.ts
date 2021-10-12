@@ -2,10 +2,11 @@ import * as decompress from 'decompress'
 import { File } from 'decompress'
 import { join, basename, extname } from 'path'
 import * as uuid from 'uuid'
+import { genThumbnail } from '../utils/genThumbnail'
 import { mkdirPromise } from '../utils/mkdirPromise'
 
 
-const tmpDir = '/app/tmp'
+const TEMP_DIR = '/app/tmp'
 
 
 export class ImportContext {
@@ -26,44 +27,46 @@ export class ImportContext {
 
 
   private async extract(): Promise<void> {
-    await mkdirPromise(this.workDir)
-    console.log(this.tempFilePath)
-    const files = await decompress(this.tempFilePath, this.workDir, {
-      filter: file =>
-        (extname(file.path) === '.jpg' || extname(file.path) === '.png') &&
-        file.path.indexOf('MACOSX') === -1,
-    })
-    this.pages = Array.from(files)
-      .map((file: File) => join(this.workDir, file.path))
-      .sort()
+    try {
+      await mkdirPromise(this.workDir)
+      await mkdirPromise(this.pagesDir)
+      const files = await decompress(this.tempFilePath, this.pagesDir, {
+        filter: file =>
+          (extname(file.path) === '.jpg' || extname(file.path) === '.png') &&
+          file.path.indexOf('MACOSX') === -1,
+      })
+      this.pages = Array.from(files)
+        .map((file: File) => join(this.pagesDir, file.path))
+        .sort()
+    } catch(e) {
+      console.error(e)
+      throw e
+    }
 
   }
 
-  // private async createThumbnails(): Promise<ImportContext> {
-  //   return new Promise((resolve, reject) => {
-  //     mkdirPromise(join(this.tmpDir, 'thumbnail')).then((tmpDir: string) => {
-  //       const thumbnailPaths: Array<string> = []
+  private async createThumbnails(): Promise<void> {
+    try {
+      const thumbnailsDirPath = await mkdirPromise(this.thumbnailsDir)
+      let thumbnailPaths: Array<string> = []
 
-  //       const promises = this.pages.map(page => () =>
-  //         new Promise((res, rej) => {
-  //           const filename = basename(page)
-  //           genThumbnail(page, tmpDir, 320).then(() => {
-  //             thumbnailPaths.push(join(tmpDir, filename))
-  //             res()
-  //           })
-  //         })
-  //       )
+      const promises = this.pages.map((page): Promise<string> =>
+        new Promise(async (resolve, reject) => {
+          const filename = basename(page)
+          await genThumbnail(page, this.thumbnailsDir, 320).then(() => {
 
-  //       promises
-  //         .reduce((m, p) => m.then(p), Promise.resolve({}))
-  //         .then(() => {
-  //           this.thumbnails = thumbnailPaths.sort()
-  //           resolve(ctx)
-  //         })
-  //         .catch(reject)
-  //     })
-  //   })
-  // }
+            resolve(join(thumbnailsDirPath, filename))
+          })
+        })
+      )
+
+      thumbnailPaths = await Promise.all(promises)
+      this.thumbnails = thumbnailPaths.sort()
+    } catch(e) {
+      console.error(e)
+      throw e
+    }
+  }
 
   // private async uploadImages(): Promise<ImportContext> {
   //   return new Promise((resolve, reject) => {
@@ -118,11 +121,22 @@ export class ImportContext {
   // }
 
   async import() {
-    this.extract()
+    await this.extract()
+    await this.createThumbnails()
+
+    console.log(this)
   }
 
   get workDir() {
-    return join(tmpDir, this.archiveUUID)
+    return join(TEMP_DIR, this.archiveUUID)
+  }
+
+  get pagesDir() {
+    return join(this.workDir, 'originals')
+  }
+
+  get thumbnailsDir() {
+    return join(this.workDir, 'thumbnails')
   }
 
   get uploadedPageKeys() {
