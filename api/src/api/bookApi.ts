@@ -1,6 +1,6 @@
 import { Request, Router } from 'express'
-import { UploadedFile } from 'express-fileupload'
 import * as fileUpload from 'express-fileupload'
+import { ImportContext } from '../models/importContext'
 
 type IndexBookRequest = Request & { query: { page: number }}
 type GetBookRequest = Request & { params: { bookId: string }}
@@ -10,12 +10,20 @@ export const BooksApiRouter = (booksRepository) => {
   const router = Router()
   router.use(fileUpload({
     useTempFiles : true,
-    tempFileDir : '/tmp/'
+    tempFileDir : '/app/tmp/',
+    preserveExtension: true
   }))
 
   router.post('/', async (req, res) => {
 
     const f = (Array.isArray(req.files.f)) ? req.files.f[0] : req.files.f
+
+    const importContext = new ImportContext({
+      filename: f.name,
+      tempFilePath: f.tempFilePath
+    })
+
+    await importContext.import()
 
     const response_data = {
       filename: f.name
