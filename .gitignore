@@ -10,6 +10,8 @@ data
 
 /api/import/*
 !/api/import/.keep
+/api/tmp/*
+!/api/tmp/.keep
 
 /deploy/tmp/*
 !/deploy/tmp
