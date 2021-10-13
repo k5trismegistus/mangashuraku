@@ -3,6 +3,7 @@ import { File } from 'decompress'
 import { join, basename, extname } from 'path'
 import * as uuid from 'uuid'
 import { genThumbnail } from '../utils/genThumbnail'
+import { uploadImage } from '../utils/minioClient'
 import { mkdirPromise } from '../utils/mkdirPromise'
 
 
@@ -68,18 +69,19 @@ export class ImportContext {
     }
   }
 
-  // private async uploadImages(): Promise<ImportContext> {
-  //   return new Promise((resolve, reject) => {
-  //     const promises = this.pages.map(pagePath => {
-  //       const key = `${this.archiveUUID}/${basename(pagePath)}`
-  //       return uploadImage(key, pagePath)
-  //     })
+  private async uploadImages(): Promise<void> {
+    try {
+      const promises = this.pages.map(pagePath => {
+        const key = `${this.archiveUUID}/${basename(pagePath)}`
+        return uploadImage(key, pagePath)
+      })
 
-  //     serialPromises(promises)
-  //       .then(() => resolve(ctx))
-  //       .catch(reject)
-  //   })
-  // }
+      await Promise.all(promises)
+    } catch(e) {
+      console.error(e)
+      throw e
+    }
+  }
 
   // private async uploadThumbnails(): Promise<ImportContext> {
   //   return new Promise((resolve, reject) => {
@@ -123,6 +125,7 @@ export class ImportContext {
   async import() {
     await this.extract()
     await this.createThumbnails()
+    await this.uploadImages()
 
     console.log(this)
   }

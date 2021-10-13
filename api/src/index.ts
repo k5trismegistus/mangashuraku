@@ -5,6 +5,8 @@ import { initRepositories } from './repository/repositories'
 
 connectToServer((err, db) => {
 
+  console.log(process.env.MINIO_ACCESS_KEY)
+
   if (err) {
     console.error(err)
     process.exit()

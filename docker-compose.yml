@@ -16,7 +16,14 @@ services:
     working_dir: '/app'
     command: 'npm run dev'
     environment:
-      - NEXT_PUBLIC_MINIO_ENDPOINT
+      - MINIO_ENDPOINT
+      - MINIO_ACCESS_KEY
+      - MINIO_SECRET_KEY
+      - MINIO_PAGE_BUCKET
+      - MINIO_THUMBNAIL_BUCKET
+      - MONGODB_HOST
+      - MONGODB_PORT
+      - MONGODB_DB
   frontend:
     build:
       context: ./frontend
@@ -47,8 +54,8 @@ services:
     ports:
       - 9000:9000
     environment:
-      MINIO_ACCESS_KEY: AKIA_MINIO_ACCESS_KEY
-      MINIO_SECRET_KEY: minio_secret_key
+      - MINIO_ACCESS_KEY
+      - MINIO_SECRET_KEY
     command: server /export
   deploy:
     build: ./deploy
