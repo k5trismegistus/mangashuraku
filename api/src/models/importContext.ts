@@ -3,7 +3,7 @@ import { File } from 'decompress'
 import { join, basename, extname } from 'path'
 import * as uuid from 'uuid'
 import { genThumbnail } from '../utils/genThumbnail'
-import { uploadImage } from '../utils/minioClient'
+import { uploadImage, uploadThumbnail } from '../utils/minioClient'
 import { mkdirPromise } from '../utils/mkdirPromise'
 
 
@@ -83,17 +83,17 @@ export class ImportContext {
     }
   }
 
-  // private async uploadThumbnails(): Promise<ImportContext> {
-  //   return new Promise((resolve, reject) => {
-  //     this.thumbnails.forEach(thumbnailPath => {
-  //       const key = `${this.archiveUUID}/${basename(thumbnailPath)}`
-
-  //       uploadThumbnail(key, thumbnailPath)
-  //         .then(etag => resolve(ctx))
-  //         .catch(reject)
-  //     })
-  //   })
-  // }
+  private async uploadThumbnails(): Promise<void> {
+    try {
+      const promises = this.thumbnails.map(thumbnailPath => {
+        const key = `${this.archiveUUID}/${basename(thumbnailPath)}`
+        uploadThumbnail(key, thumbnailPath)
+      })
+    } catch(e) {
+      console.error(e)
+      throw e
+    }
+  }
 
   // private async registerToDb(): Promise<ImportContext> {
   //   return new Promise((resolve, reject) => {
@@ -126,6 +126,7 @@ export class ImportContext {
     await this.extract()
     await this.createThumbnails()
     await this.uploadImages()
+    await this.uploadThumbnails()
 
     console.log(this)
   }
