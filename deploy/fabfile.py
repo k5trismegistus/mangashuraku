@@ -7,9 +7,9 @@ WORKING_DIR = '/home/kyamamoto/apps/mangashuraku'
 @task
 def production(ctx):
     ctx.name = 'mangashuraku'
-    ctx.host = os.getenv('HOST')
-    ctx.user = os.getenv('USER')
-    ctx.connect_kwargs.password = os.getenv('PASSWORD')
+    ctx.host = os.getenv('DEPLOY_HOST')
+    ctx.user = os.getenv('DEPLOY_USER')
+    ctx.connect_kwargs.password = os.getenv('DEPLOY_PASSWORD')
 
 @task
 def compress(ctx):

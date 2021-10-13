@@ -40,6 +40,8 @@ services:
     environment:
       - NEXT_PUBLIC_API_ENDPOINT
       - NEXT_PUBLIC_MINIO_ENDPOINT
+      - MINIO_PAGE_BUCKET
+      - MINIO_THUMBNAIL_BUCKET
   mongodb:
     image: mongo:3.2-jessie
     ports:
@@ -64,4 +66,8 @@ services:
      - ./:/app/src/
      - ./tmp:/tmp
     working_dir: /app
-    env_file: ./deploy/.env
+    environment:
+      - DEPLOY_HOST
+      - DEPLOY_USER
+      - DEPLOY_PASSWORD
+      - DEPLOY_DIR
