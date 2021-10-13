@@ -2,9 +2,11 @@ import * as decompress from 'decompress'
 import { File } from 'decompress'
 import { join, basename, extname } from 'path'
 import * as uuid from 'uuid'
+import { BooksRepository } from '../repository/booksRepository'
 import { genThumbnail } from '../utils/genThumbnail'
 import { uploadImage, uploadThumbnail } from '../utils/minioClient'
 import { mkdirPromise } from '../utils/mkdirPromise'
+import { Book } from './book'
 
 
 const TEMP_DIR = '/app/tmp'
@@ -18,12 +20,15 @@ export class ImportContext {
   pages: Array<string>
   thumbnails: Array<string>
   tmpDir: string
+  booksRepository: BooksRepository
+  persistedData: Book
 
-  constructor({ filename, tempFilePath }) {
+  constructor({ filename, tempFilePath, booksRepository }) {
     this.importState = 'initialized'
     this.archiveUUID = uuid.v4()
     this.filename = filename
     this.tempFilePath = tempFilePath
+    this.booksRepository = booksRepository
   }
 
 
@@ -95,23 +100,23 @@ export class ImportContext {
     }
   }
 
-  // private async registerToDb(): Promise<ImportContext> {
-  //   return new Promise((resolve, reject) => {
-  //     insertBook({
-  //       archiveUUID: this.archiveUUID,
-  //       originalName: this.originalFilename,
-  //       title: '',
-  //       authorIds: [],
-  //       organizationIds: [],
-  //       genreIds: [],
-  //       pages: this.uploadedPageKeys,
-  //       thumbnails: this.uploadedThumbnailKeys,
-  //       cover: this.uploadedPageKeys[0],
-  //       coverThumbnail: this.uploadedThumbnailKeys[0],
-  //       createdAt: new Date(),
-  //     }).then(() => resolve(ctx))
-  //   })
-  // }
+  private async registerToDb(): Promise<void> {
+    try {
+      const book = await this.booksRepository.insertBook({
+        archiveUUID: this.archiveUUID,
+        originalName: this.filename,
+        pages: this.uploadedPageKeys,
+        thumbnails: this.uploadedThumbnailKeys,
+        cover: this.uploadedPageKeys[0],
+        coverThumbnail: this.uploadedThumbnailKeys[0],
+      })
+
+      this.persistedData = book
+    } catch(e) {
+      console.error(e)
+      throw e
+    }
+  }
 
   // private async cleanUp(): Promise<ImportContext> {
   //   return new Promise((resolve, reject) => {
@@ -127,6 +132,7 @@ export class ImportContext {
     await this.createThumbnails()
     await this.uploadImages()
     await this.uploadThumbnails()
+    await this.registerToDb()
 
     console.log(this)
   }

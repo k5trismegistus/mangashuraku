@@ -1,14 +1,14 @@
 import { deleteImage, deleteThumbnail } from '../utils/minioClient'
 
 export type BookParams = {
-  _id: string
+  _id?: string
   archiveUUID: string
   originalName: string
   pages: string[]
   thumbnails: string[]
   cover: string
   coverThumbnail: string
-  createdAt: Date
+  createdAt?: Date
 }
 export class Book {
   _id: string

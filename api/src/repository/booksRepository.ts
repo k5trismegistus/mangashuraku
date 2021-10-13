@@ -9,9 +9,10 @@ export class BooksRepository {
     this.booksCollection = mongoConnection.collection(COLLECTION_NAME)
   }
 
-  insertBook(params: BookParams): Promise<Book> {
-    return new Promise((resolve, reject) => {
-      this.booksCollection.insertOne({
+  async insertBook(params: BookParams): Promise<Book> {
+    const createdAt = new Date()
+    try {
+      const result = await this.booksCollection.insertOne({
         _id: (new ObjectId(params._id)),
         archiveUUID: params.archiveUUID,
         originalName: params.originalName,
@@ -19,18 +20,18 @@ export class BooksRepository {
         thumbnails: params.thumbnails,
         cover: params.cover,
         coverThumbnail: params.coverThumbnail,
-        createdAt: (new Date(params.createdAt))    }, (err, result) => {
-        if (err) return reject(err)
-
-        const book = new Book({
-          _id: result.insertedId,
-          createdAt: new Date(),
-          ...params,
-        })
-
-        resolve(book)
+        createdAt: createdAt
       })
-    })
+      const book = new Book({
+        _id: result.insertedId.toString(),
+        createdAt: new Date(),
+        ...params,
+      })
+      return book
+    } catch(e) {
+      console.error(e)
+      throw e
+    }
   }
 
   async indexBook({ limit, offset }) {

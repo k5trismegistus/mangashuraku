@@ -1,12 +1,13 @@
 import { Request, Router } from 'express'
 import * as fileUpload from 'express-fileupload'
 import { ImportContext } from '../models/importContext'
+import { BooksRepository } from '../repository/booksRepository'
 
 type IndexBookRequest = Request & { query: { page: number }}
 type GetBookRequest = Request & { params: { bookId: string }}
 type DeleteBookRequest = Request & { params: { bookId: string }}
 
-export const BooksApiRouter = (booksRepository) => {
+export const BooksApiRouter = (booksRepository: BooksRepository) => {
   const router = Router()
   router.use(fileUpload({
     useTempFiles : true,
@@ -20,7 +21,8 @@ export const BooksApiRouter = (booksRepository) => {
 
     const importContext = new ImportContext({
       filename: f.name,
-      tempFilePath: f.tempFilePath
+      tempFilePath: f.tempFilePath,
+      booksRepository: booksRepository,
     })
 
     await importContext.import()
