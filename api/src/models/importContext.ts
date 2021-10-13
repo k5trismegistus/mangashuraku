@@ -1,12 +1,15 @@
-import * as decompress from 'decompress'
-import { File } from 'decompress'
 import { join, basename, extname } from 'path'
 import * as uuid from 'uuid'
+import * as decompress from 'decompress'
+import { File } from 'decompress'
+
+import { Book } from './book'
 import { BooksRepository } from '../repository/booksRepository'
+
+import { removeDirectory, removeFile } from '../utils/cleanup'
 import { genThumbnail } from '../utils/genThumbnail'
 import { uploadImage, uploadThumbnail } from '../utils/minioClient'
 import { mkdirPromise } from '../utils/mkdirPromise'
-import { Book } from './book'
 
 
 const TEMP_DIR = '/app/tmp'
@@ -118,14 +121,10 @@ export class ImportContext {
     }
   }
 
-  // private async cleanUp(): Promise<ImportContext> {
-  //   return new Promise((resolve, reject) => {
-  //     rimraf(this.tmpDir, err => {
-  //       if (err) return reject(err)
-  //       resolve(this)
-  //     })
-  //   })
-  // }
+  private async cleanUp(): Promise<void> {
+    removeDirectory(this.workDir)
+    removeFile(this.tempFilePath)
+  }
 
   async import() {
     await this.extract()
@@ -133,6 +132,7 @@ export class ImportContext {
     await this.uploadImages()
     await this.uploadThumbnails()
     await this.registerToDb()
+    await this.cleanUp()
 
     console.log(this)
   }
