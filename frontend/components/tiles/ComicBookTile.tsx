@@ -29,7 +29,7 @@ const ComicBookTile = ({
           title="cover"
         />
         <CardContent>
-          <Typography gutterBottom variant="headline" component="h2">
+          <Typography gutterBottom component="h2">
             {comicBook.title}
           </Typography>
           <Typography component="p">

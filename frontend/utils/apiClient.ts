@@ -11,13 +11,32 @@ type IndexBooksParams = {
   page: number
 }
 
+type IndexComicBooksResponse = {
+  data: {
+    meta: {
+      total: number
+    },
+    data: {
+      books: ComicBook[]
+    }
+  }
+}
+
+type ShowComicResponse = {
+  data: {
+    data: {
+      book: ComicBook
+    }
+  }
+}
+
 export const apiClient = {
   createBook: async (bookArchive: File): Promise<ComicBook> => {
     try {
       let formData = new FormData()
       formData.append('f', bookArchive)
 
-      const res = await instance.post(`/books/`, formData, { headers: { 'Content-Type': 'multipart/form-data' }})
+      const res: ShowComicResponse = await instance.post(`/books/`, formData, { headers: { 'Content-Type': 'multipart/form-data' }})
 
       return res.data.data.book
     } catch(e) {
@@ -28,7 +47,7 @@ export const apiClient = {
 
   indexBooks: async (params: IndexBooksParams): Promise<ComicBookList> => {
     try {
-      const res = await instance.get(`/books/`, { params })
+      const res: IndexComicBooksResponse = await instance.get(`/books/`, { params })
 
       const count: number = res.data.meta.total
       const comicBooks: ComicBook[] = res.data.data.books
@@ -41,7 +60,7 @@ export const apiClient = {
 
   getComic: async ({ id }): Promise<ComicBook> => {
     try {
-      const res = await instance.get(`/books/${id}`)
+      const res: ShowComicResponse = await instance.get(`/books/${id}`)
       return res.data.data.book
     } catch (e) {
       console.error(e)
