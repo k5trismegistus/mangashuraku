@@ -21,6 +21,11 @@ type Props = {
   initialSearchQuery: string
 }
 
+type Params = {
+  page?: number
+  q?: string
+}
+
 const PER_PAGE = 20
 
 const ComicTop = ({
@@ -43,10 +48,10 @@ const ComicTop = ({
     setComicBooks(comicBooksRes.comicBooks)
     setTotalComicBooks(comicBooksRes.count)
 
-    const params = {}
+    const params: Params = {}
     if (page) params.page = page
     if (searchQuery) params.q = searchQuery
-    const paramsObj = new URLSearchParams(params)
+    const paramsObj = new URLSearchParams({page: params.page.toString(), q: params.q})
 
     router.push(`${window.location.pathname}?${paramsObj.toString()}`)
   }
