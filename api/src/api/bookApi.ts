@@ -28,7 +28,7 @@ export const BooksApiRouter = (booksRepository: BooksRepository) => {
     await importContext.import()
 
     const response_data = {
-      filename: f.name
+      data: { book: importContext.persistedData }
     }
     res.send(response_data)
   })
