@@ -1,0 +1,23 @@
+.container {
+  padding: 0 4rem;
+}
+
+.dropArea {
+  width: 500px;
+  height: 100px;
+  border: solid 1px black;
+}
+
+.hiddenDropArea {
+  display: none;
+}
+
+.waitMessageArea {
+  width: 500px;
+  height: 100px;
+  border: solid 1px black;
+}
+
+.hiddenWaitMessageArea {
+  display: none;
+}
