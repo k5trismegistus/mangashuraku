@@ -12,6 +12,20 @@ type IndexBooksParams = {
 }
 
 export const apiClient = {
+  createBook: async (bookArchive: File): Promise<ComicBook> => {
+    try {
+      let formData = new FormData()
+      formData.append('f', bookArchive)
+
+      const res = await instance.post(`/books/`, formData, { headers: { 'Content-Type': 'multipart/form-data' }})
+
+      return res.data.data.book
+    } catch(e) {
+      console.error(e)
+      throw e
+    }
+  },
+
   indexBooks: async (params: IndexBooksParams): Promise<ComicBookList> => {
     try {
       const res = await instance.get(`/books/`, { params })
