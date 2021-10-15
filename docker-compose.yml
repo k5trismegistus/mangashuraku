@@ -38,10 +38,11 @@ services:
       - minio
     command: 'npm run dev'
     environment:
+      - PRIVATE_API_ENDPOINT
       - NEXT_PUBLIC_API_ENDPOINT
       - NEXT_PUBLIC_MINIO_ENDPOINT
-      - MINIO_PAGE_BUCKET
-      - MINIO_THUMBNAIL_BUCKET
+      - NEXT_PUBLIC_MINIO_PAGE_BUCKET
+      - NEXT_PUBLIC_MINIO_THUMBNAIL_BUCKET
   mongodb:
     image: mongo:3.2-jessie
     ports:

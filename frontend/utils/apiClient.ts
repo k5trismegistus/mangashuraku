@@ -1,7 +1,10 @@
 import axios from 'axios'
 import { ComicBook, ComicBookList } from '../types'
 
-const instance = axios.create({ baseURL: 'http://192.168.11.12:3001/api/' })
+const apiHost = (process.env.PRIVATE_API_ENDPOINT) ?
+  process.env.PRIVATE_API_ENDPOINT :
+  process.env.NEXT_PUBLIC_API_ENDPOINT
+const instance = axios.create({ baseURL: `http://${apiHost}/api` })
 
 type IndexBooksParams = {
   searchQuery: string
