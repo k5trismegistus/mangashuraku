@@ -21,5 +21,8 @@ tmp/*
 
 /frontend/.cache/*
 
-.env
 .envrc
+.envrc.production
+
+docker-compose.yml
+deploy/
