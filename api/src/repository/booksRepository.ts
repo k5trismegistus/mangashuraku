@@ -41,7 +41,7 @@ export class BooksRepository {
       .skip(offset ? offset : 0)
       .limit(limit ? limit : 20)
 
-    const total = await rawResult.count()
+    const total = await this.booksCollection.countDocuments()
     const results = await rawResult.toArray()
     const books = results.map(result => new Book({
       _id: result._id,

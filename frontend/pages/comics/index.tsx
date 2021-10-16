@@ -22,7 +22,7 @@ type Props = {
 }
 
 type Params = {
-  page?: number
+  page?: string
   q?: string
 }
 
@@ -49,9 +49,9 @@ const ComicTop = ({
     setTotalComicBooks(comicBooksRes.count)
 
     const params: Params = {}
-    if (page) params.page = page
+    if (page) params.page = page.toString()
     if (searchQuery) params.q = searchQuery
-    const paramsObj = new URLSearchParams({page: params.page.toString(), q: params.q})
+    const paramsObj = new URLSearchParams(params)
 
     router.push(`${window.location.pathname}?${paramsObj.toString()}`)
   }
@@ -128,7 +128,7 @@ const ComicTop = ({
                 className={styles.forwardButton}
               >
                 {'>'}
-              </Button> : null
+              </Button> : <p>{totalComicBooks}</p>
             }
         </Grid>
       </Grid>
@@ -140,7 +140,7 @@ export const getServerSideProps = async ({ query }): Promise<{props: Props}> => 
   const searchQuery = (query.q) ?
     query.q : ''
   const initialPageNumber = (query.page) ?
-    Math.min(parseInt(query.page) - 1, 0) : 0
+    Math.max(parseInt(query.page) - 1, 0) : 0
   const comicBooksRes = await apiClient.indexBooks({ searchQuery, page: initialPageNumber })
   return { props: {
     initialShowingComicBooks: comicBooksRes.comicBooks,
