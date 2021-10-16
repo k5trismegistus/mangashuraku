@@ -1,24 +1,31 @@
 require('dotenv').config()
-import * as http from 'http'
+import { MongoClient } from 'mongodb'
 import * as request from 'supertest'
-import { app } from '../../app'
+import { initApp } from '../../app'
+import { initRepositories } from '../../repository/repositories'
 
 jest.mock('../../repository/booksRepository')
 
-let server: http.Server
 
-beforeAll((done) => {
-  server = http.createServer(app)
-  server.listen(done)
-})
+describe('Books API', () => {
+  let repositories
+  let connection: MongoClient
+  let app
 
-afterAll((done) => {
-  server.close(done)
-})
+  beforeAll(async () => {
+    connection = await MongoClient.connect(`mongodb://${process.env.MONGODB_HOST}:${process.env.MONGODB_PORT}`)
 
-describe('GET /books', () => {
-  it('should return status 200', async () => {
-    const response = await request(app).get('/api/books')
-    expect(response.status).toBe(200)
+    repositories = initRepositories(connection.db(process.env.MONGODB_DB))
+    app = initApp(repositories)
+  })
+
+  afterAll(async () => {
+    await connection.close()
+  })
+  describe('GET /books', () => {
+    it('should return status 200', async () => {
+      const response = await request(app).get('/api/books')
+      expect(response.status).toBe(200)
+    })
   })
 })

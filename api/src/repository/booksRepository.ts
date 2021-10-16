@@ -1,62 +1,83 @@
-import { ObjectId } from 'mongodb'
-import { mongodb } from '../lib/mongo'
-import { IBookParameter, Book } from '../models/book'
-import { BookIndexFields } from '../models/book'
+import { Collection, Db, ObjectId } from 'mongodb'
+import { BookParams, Book } from '../models/book'
 
 const COLLECTION_NAME = 'books'
+export class BooksRepository {
+  booksCollection: Collection
 
-export const insertBook = (params: IBookParameter): Promise<Book> => {
-  return new Promise((resolve, reject) => {
-    mongodb.collection(COLLECTION_NAME).insertOne(params, (err, result) => {
-      if (err) return reject(err)
+  constructor (mongoConnection: Db) {
+    this.booksCollection = mongoConnection.collection(COLLECTION_NAME)
+  }
 
+  async insertBook(params: BookParams): Promise<Book> {
+    const createdAt = new Date()
+    try {
+      const result = await this.booksCollection.insertOne({
+        _id: (new ObjectId(params._id)),
+        archiveUUID: params.archiveUUID,
+        originalName: params.originalName,
+        pages: params.pages,
+        thumbnails: params.thumbnails,
+        cover: params.cover,
+        coverThumbnail: params.coverThumbnail,
+        createdAt: createdAt
+      })
       const book = new Book({
-        id: result.insertedId,
+        _id: result.insertedId.toString(),
         createdAt: new Date(),
         ...params,
       })
-
-      resolve(book)
-    })
-  })
-}
-
-export const indexBook = async params => {
-  const searchQuery = params.search
-    ? {
-        $or: [
-          { title: new RegExp('.*' + params.search + '.*', 'i') },
-          { originalName: new RegExp('.*' + params.search + '.*', 'i') },
-        ],
-      }
-    : {}
-
-  const result = await mongodb
-    .collection(COLLECTION_NAME)
-    .find(searchQuery, BookIndexFields)
-    .sort({ order_by: -1 })
-    .skip(params.offset ? params.offset : 0)
-    .limit(params.limit ? params.limit : 20)
-
-  const total = await result.count()
-  const booksParams = await result.toArray()
-  const books = booksParams.map(p => new Book(p))
-
-  return {
-    total,
-    books,
+      return book
+    } catch(e) {
+      console.error(e)
+      throw e
+    }
   }
-}
 
-export const findBook = async (params): Promise<Book> => {
-  const oid = new ObjectId(params.bookId)
-  const bookParams = await mongodb
-    .collection(COLLECTION_NAME)
-    .findOne({ _id: oid })
-  return new Book(bookParams)
-}
+  async indexBook({ limit, offset }) {
+    const rawResult = await this.booksCollection
+      .find()
+      .sort({ order_by: -1 })
+      .skip(offset ? offset : 0)
+      .limit(limit ? limit : 20)
 
-export const deleteBook = async ({ bookId }) => {
-  const oid = new ObjectId(bookId)
-  await mongodb.collection(COLLECTION_NAME).remove({ _id: oid })
+    const total = await this.booksCollection.countDocuments()
+    const results = await rawResult.toArray()
+    const books = results.map(result => new Book({
+      _id: result._id,
+      archiveUUID: result.archiveUUID,
+      originalName: result.originalName,
+      pages: result.pages,
+      thumbnails: result.thumbnails,
+      cover: result.cover,
+      coverThumbnail: result.coverThumbnail,
+      createdAt: (new Date(result.createdAt))
+    }))
+
+    return {
+      total,
+      books,
+    }
+  }
+
+  async findBook({ bookId }): Promise<Book>  {
+    const oid = new ObjectId(bookId)
+    const result = await this.booksCollection
+      .findOne({ _id: oid })
+    return new Book({
+      _id: result._id,
+      archiveUUID: result.archiveUUID,
+      originalName: result.originalName,
+      pages: result.pages,
+      thumbnails: result.thumbnails,
+      cover: result.cover,
+      coverThumbnail: result.coverThumbnail,
+      createdAt: (new Date(result.createdAt))
+    })
+  }
+
+  async deleteBook({ bookId }) {
+    const oid = new ObjectId(bookId)
+    await this.booksCollection.deleteOne({ _id: oid })
+  }
 }

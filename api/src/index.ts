@@ -1,8 +1,20 @@
 require('dotenv').config()
-import { app } from './app'
-import { mongoClientInitialized } from './lib/mongo'
+import { initApp } from './app'
+import { connectToServer } from './lib/mongo'
+import { initRepositories } from './repository/repositories'
 
-mongoClientInitialized().then(() => {
+connectToServer((err, db) => {
+
+  console.log(process.env.MINIO_ACCESS_KEY)
+
+  if (err) {
+    console.error(err)
+    process.exit()
+  }
+
+  const repositories = initRepositories(db)
+  const app = initApp(repositories)
+
   app.listen(
     3001,
     () => {

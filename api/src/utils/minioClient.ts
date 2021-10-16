@@ -1,14 +1,14 @@
 import { S3 } from 'aws-sdk'
 import { PathLike, readFile } from 'fs'
 
-const IMAGE_BUCKET = 'mangashuraku'
-const THUMBNAIL_BUCKET = 'mangashuraku-thumbnail'
+const IMAGE_BUCKET = process.env.MINIO_PAGE_BUCKET
+const THUMBNAIL_BUCKET = process.env.MINIO_THUMBNAIL_BUCKET
 const BUCKETS = [IMAGE_BUCKET, THUMBNAIL_BUCKET]
 
 const minioClient = new S3({
   endpoint: process.env.MINIO_ENDPOINT,
-  accessKeyId: 'AKIA_MINIO_ACCESS_KEY',
-  secretAccessKey: 'minio_secret_key',
+  accessKeyId: process.env.MINIO_ACCESS_KEY,
+  secretAccessKey: process.env.MINIO_SECRET_KEY,
   s3ForcePathStyle: true,
   sslEnabled: false,
 })

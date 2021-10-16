@@ -21,6 +21,11 @@ type Props = {
   initialSearchQuery: string
 }
 
+type Params = {
+  page?: string
+  q?: string
+}
+
 const PER_PAGE = 20
 
 const ComicTop = ({
@@ -43,8 +48,8 @@ const ComicTop = ({
     setComicBooks(comicBooksRes.comicBooks)
     setTotalComicBooks(comicBooksRes.count)
 
-    const params = {}
-    if (page) params.page = page
+    const params: Params = {}
+    if (page) params.page = page.toString()
     if (searchQuery) params.q = searchQuery
     const paramsObj = new URLSearchParams(params)
 
@@ -123,7 +128,7 @@ const ComicTop = ({
                 className={styles.forwardButton}
               >
                 {'>'}
-              </Button> : null
+              </Button> : <p>{totalComicBooks}</p>
             }
         </Grid>
       </Grid>
@@ -135,7 +140,7 @@ export const getServerSideProps = async ({ query }): Promise<{props: Props}> => 
   const searchQuery = (query.q) ?
     query.q : ''
   const initialPageNumber = (query.page) ?
-    Math.min(parseInt(query.page) - 1, 0) : 0
+    Math.max(parseInt(query.page) - 1, 0) : 0
   const comicBooksRes = await apiClient.indexBooks({ searchQuery, page: initialPageNumber })
   return { props: {
     initialShowingComicBooks: comicBooksRes.comicBooks,
