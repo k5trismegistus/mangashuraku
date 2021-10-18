@@ -1,12 +1,36 @@
 import { Collection, Db, ObjectId } from 'mongodb'
+import { esClient } from '../lib/elasticsearch'
 import { BookParams, Book } from '../models/book'
 
 const COLLECTION_NAME = 'books'
+const INDEX_NAME = 'books'
+
+const bookIndexData = (book: Book) => ({
+  id: book._id,
+  originalName: book.originalName,
+  createdAt: book.createdAt
+})
 export class BooksRepository {
   booksCollection: Collection
 
   constructor (mongoConnection: Db) {
     this.booksCollection = mongoConnection.collection(COLLECTION_NAME)
+  }
+
+  static collectionName() {
+    return COLLECTION_NAME
+  }
+
+  static indexName() {
+    return INDEX_NAME
+  }
+
+  static esMapping() {
+    return {
+      id: { type: 'string' },
+      originalName: { type: 'string' },
+      createdAt: { type: 'date' },
+    }
   }
 
   async insertBook(params: BookParams): Promise<Book> {
@@ -60,6 +84,17 @@ export class BooksRepository {
     }
   }
 
+  async searchBook({ searchQuery, page }) {
+    const esResponse = await esClient.search({
+      index: INDEX_NAME,
+      body: {
+        query: {
+          match: { hello: 'world' }
+        }
+      }
+    })
+  }
+
   async findBook({ bookId }): Promise<Book>  {
     const oid = new ObjectId(bookId)
     const result = await this.booksCollection
@@ -79,5 +114,25 @@ export class BooksRepository {
   async deleteBook({ bookId }) {
     const oid = new ObjectId(bookId)
     await this.booksCollection.deleteOne({ _id: oid })
+  }
+
+  async index(book: Book) {
+    const body = bookIndexData(book)
+
+    esClient.index({
+      index: INDEX_NAME,
+      body
+    })
+  }
+
+  async indexBulk(books: Book[]) {
+    const data = books.map((book) => (bookIndexData(book)))
+    const body = data.flatMap((doc) => ([{ index: { _index: INDEX_NAME } }, doc]))
+    const { body: bulkResponse } = await esClient.bulk({ refresh: true, body })
+    console.log(body)
+  }
+
+  async deleteIndex() {
+    await esClient.indices.delete({ index: INDEX_NAME })
   }
 }
