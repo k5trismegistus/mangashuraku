@@ -44,6 +44,7 @@
     "typescript": "^4.4.3"
   },
   "dependencies": {
+    "@elastic/elasticsearch": "^7.15.0",
     "aws-sdk": "^2.1004.0",
     "decompress": "^4.2.1",
     "dotenv": "^10.0",
