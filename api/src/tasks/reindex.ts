@@ -10,11 +10,11 @@ class ReindexTask {
 
   async run() {
     try {
-      esClient.indices.delete({ index: BooksRepository.indexName() })
+      await esClient.indices.delete({ index: BooksRepository.indexName() })
 
-      esClient.indices.create({
+      await esClient.indices.create({
         index: BooksRepository.indexName(),
-        body: { mappings: BooksRepository.esMapping() },
+        body: BooksRepository.esIndexConfig,
       })
     } catch(e) {
       console.error(e)
@@ -25,7 +25,6 @@ class ReindexTask {
     let page = 0
     while(true) {
       const res = await this.booksRepository.indexBook({ limit: per_page, offset: per_page * page})
-      console.log(res.total)
       const books = res.books
 
       if (books.length === 0) {

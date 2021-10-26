@@ -6,7 +6,7 @@ const COLLECTION_NAME = 'books'
 const INDEX_NAME = 'books'
 
 const bookIndexData = (book: Book) => ({
-  id: book._id,
+  id: book._id, // cannot use field staring with _ is not available in Elasticsearch
   originalName: book.originalName,
   createdAt: book.createdAt
 })
@@ -25,11 +25,27 @@ export class BooksRepository {
     return INDEX_NAME
   }
 
-  static esMapping() {
+  static esIndexConfig() {
     return {
-      id: { type: 'string' },
-      originalName: { type: 'string' },
-      createdAt: { type: 'date' },
+      settings: {
+        analysis: {
+          analyzer: {
+            kuromoji: {
+              type: "custom",
+              tokenizer: "kuromoji_tokenizer"
+            }
+          }
+        }
+      },
+      mappings: {
+        id: { type: 'string' },
+        originalName: {
+          type: 'text',
+          analyzer: 'kuromoji',
+          term_vector: "with_positions_offsets",
+        },
+        createdAt: { type: 'date' },
+      }
     }
   }
 
@@ -84,15 +100,29 @@ export class BooksRepository {
     }
   }
 
-  async searchBook({ searchQuery, page }) {
-    const esResponse = await esClient.search({
+  async searchBook({ searchQuery, perPage, from }) {
+    const { body } = await esClient.search({
       index: INDEX_NAME,
       body: {
         query: {
-          match: { hello: 'world' }
-        }
+          query_string: {
+            query: searchQuery,
+          },
+        },
+        size: perPage,
+        from: from,
       }
     })
+
+    const total = body.hits.total.value
+    const bookIds = body.hits.hits.map((h) => (h._source.id))
+
+    const books = await this.findBooks({ bookIds })
+
+    return {
+      total,
+      books,
+    }
   }
 
   async findBook({ bookId }): Promise<Book>  {
@@ -109,6 +139,25 @@ export class BooksRepository {
       coverThumbnail: result.coverThumbnail,
       createdAt: (new Date(result.createdAt))
     })
+  }
+
+  async findBooks({ bookIds }): Promise<Book[]>  {
+    const oids = bookIds.map((oid) => (new ObjectId(oid)))
+    const cursor = await this.booksCollection
+      .find({ _id: { $in: oids }})
+    const results = await cursor.toArray()
+    console.log(await cursor.count())
+
+    return results.map((result) => (new Book({
+      _id: result._id,
+      archiveUUID: result.archiveUUID,
+      originalName: result.originalName,
+      pages: result.pages,
+      thumbnails: result.thumbnails,
+      cover: result.cover,
+      coverThumbnail: result.coverThumbnail,
+      createdAt: (new Date(result.createdAt))
+    })))
   }
 
   async deleteBook({ bookId }) {
@@ -128,8 +177,7 @@ export class BooksRepository {
   async indexBulk(books: Book[]) {
     const data = books.map((book) => (bookIndexData(book)))
     const body = data.flatMap((doc) => ([{ index: { _index: INDEX_NAME } }, doc]))
-    const { body: bulkResponse } = await esClient.bulk({ refresh: true, body })
-    console.log(body)
+    await esClient.bulk({ refresh: true, body })
   }
 
   async deleteIndex() {

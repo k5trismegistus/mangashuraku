@@ -1,5 +1,6 @@
 import { Request, Router } from 'express'
 import * as fileUpload from 'express-fileupload'
+import { esClient } from '../lib/elasticsearch'
 import { ImportContext } from '../models/importContext'
 import { BooksRepository } from '../repository/booksRepository'
 import { ReindexTask } from '../tasks/reindex'
@@ -30,6 +31,7 @@ export const BooksApiRouter = (booksRepository: BooksRepository) => {
     })
 
     await importContext.import()
+    await booksRepository.index(importContext.persistedData)
 
     const response_data = {
       data: { book: importContext.persistedData }
@@ -49,6 +51,27 @@ export const BooksApiRouter = (booksRepository: BooksRepository) => {
     res.send(response_data)
   })
 
+  router.get('/search', async (req: SearchBookRequest, res) => {
+    const searchQuery = req.query.q
+    const from = req.query.page ? (req.query.page * PER_PAGE) : 0
+
+    const { total, books} = await booksRepository.searchBook({
+      searchQuery, perPage: PER_PAGE, from,
+    })
+
+    res.send({
+      total,
+      books
+    })
+  })
+
+  router.post('/reindex', (req, res) => {
+    const reindexTask = new ReindexTask({ booksRepository })
+    reindexTask.run()
+
+    res.status(204)
+  })
+
   router.get('/:bookId', async (req: GetBookRequest, res) => {
     const bookId = req.params.bookId
     const book = await booksRepository.findBook({ bookId })
@@ -59,27 +82,12 @@ export const BooksApiRouter = (booksRepository: BooksRepository) => {
     res.send(response_data)
   })
 
-  // router.get('/search', async (req: SearchBookRequest, res) => {
-  //   const searchQuery = req.query.q
-  //   const page = req.query.q
-
-
-  // })
-
-
   router.delete('/:bookId', async (req: DeleteBookRequest, res) => {
     const bookId = req.params.bookId
 
     const book = await booksRepository.findBook({ bookId })
     book.deleteImageFiles()
     await booksRepository.deleteBook({ bookId })
-
-    res.status(204)
-  })
-
-  router.post('/reindex', (req, res) => {
-    const reindexTask = new ReindexTask({ booksRepository })
-    reindexTask.run()
 
     res.status(204)
   })
