@@ -133,8 +133,6 @@ export class ImportContext {
     await this.uploadThumbnails()
     await this.registerToDb()
     await this.cleanUp()
-
-    console.log(this)
   }
 
   get workDir() {

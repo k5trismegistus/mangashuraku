@@ -12,8 +12,6 @@ export const connectToServer = (callback) => {
     }
 
     dbConnection = db.db(process.env.MONGODB_DB)
-    console.log("Successfully connected to MongoDB.")
-
     return callback(null, dbConnection)
   })
 }
