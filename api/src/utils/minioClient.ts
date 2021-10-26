@@ -35,7 +35,7 @@ const uploadImage = (key: string, filepath: PathLike) => {
   return new Promise((resolve, reject) => {
     readFile(filepath, (err, data) => {
       if (err) {
-        console.log(err)
+        console.error(err)
         return reject(err)
       }
 
@@ -47,7 +47,7 @@ const uploadImage = (key: string, filepath: PathLike) => {
         },
         (err, etag) => {
           if (err) {
-            console.log(err)
+            console.error(err)
             return reject(err)
           }
           resolve(etag)
@@ -77,7 +77,7 @@ const uploadThumbnail = (key: string, filepath: PathLike) => {
   return new Promise((resolve, reject) => {
     readFile(filepath, (err, data) => {
       if (err) {
-        console.log(err)
+        console.error(err)
         return reject(err)
       }
 
@@ -89,7 +89,7 @@ const uploadThumbnail = (key: string, filepath: PathLike) => {
         },
         (err, etag) => {
           if (err) {
-            console.log(err)
+            console.error(err)
             return reject(err)
           }
           resolve(etag)
