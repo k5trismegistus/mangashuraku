@@ -47,7 +47,7 @@ export const apiClient = {
 
   indexBooks: async (params: IndexBooksParams): Promise<ComicBookList> => {
     try {
-      const res: IndexComicBooksResponse = await instance.get(`/books/`, { params })
+      const res: IndexComicBooksResponse = await instance.get(`/books/`, { params: { q: params.searchQuery, page: params.page }})
 
       const count: number = res.data.meta.total
       const comicBooks: ComicBook[] = res.data.data.books

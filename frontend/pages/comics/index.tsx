@@ -1,5 +1,8 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useRouter } from 'next/dist/client/router'
+
+import { useRecoilState } from 'recoil'
+import { searchQueryState, pageState } from '../../stores/comicSearchState'
 
 import { apiClient } from "../../utils/apiClient"
 
@@ -8,9 +11,8 @@ import ComicBookTile from '../../components/tiles/ComicBookTile'
 
 import { ComicBook, ComicBookList } from '../../types'
 
-import { Grid, Button, Select, MenuItem,} from '@mui/material'
+import { Grid, Button, Select, MenuItem, TextField,} from '@mui/material'
 
-// import SearchField from '../Top/SearchField'
 import styles from './index.module.css'
 
 
@@ -38,8 +40,14 @@ const ComicTop = ({
 
   const [comicBooks, setComicBooks] = useState(initialShowingComicBooks)
   const [totalComicBooks, setTotalComicBooks] = useState(initialTotalComicBooks)
-  const [page, setPage] = useState(initialPage)
-  const [searchQuery, setSearchQuery] = useState(initialSearchQuery)
+  const [page, setPage] = useRecoilState(pageState)
+  const [searchQuery, setSearchQuery] = useRecoilState(searchQueryState)
+  const [inputtingSearchQuery, setInputtingSearchQuery] = useState('')
+  useEffect(() => {
+    setSearchQuery(initialSearchQuery)
+    setInputtingSearchQuery(initialSearchQuery)
+    setPage(initialPage)
+  }, [])
 
   const fetchComicBookList = async ({ page, searchQuery }) => {
     const comicBooksRes = await apiClient.indexBooks({ page, searchQuery })
@@ -56,6 +64,12 @@ const ComicTop = ({
     router.push(`${window.location.pathname}?${paramsObj.toString()}`)
   }
 
+  const handleSearch = async () => {
+    setSearchQuery(inputtingSearchQuery)
+
+    await fetchComicBookList({ page: 1, searchQuery: inputtingSearchQuery })
+  }
+
   return (
     <div className={styles.container}>
       <Grid container>
@@ -64,10 +78,11 @@ const ComicTop = ({
           item
           xs={12}
         >
-          {/* <SearchField
-            query={query}
-            fetchBookList={fetchBookList}
-          /> */}
+          <TextField
+            defaultValue={inputtingSearchQuery}
+            onChange={(e) => setInputtingSearchQuery(e.target.value)}
+          />
+          <Button variant="contained" onClick={handleSearch}>Search</Button>
         </Grid>
         <Grid
           container
@@ -97,9 +112,9 @@ const ComicTop = ({
         >
 
           {
-            page > 0 ?
+            page > 1 ?
               <Button
-                onClick={() => fetchComicBookList({ page: page - 1, searchQuery }) }
+                onClick={() => fetchComicBookList({ page: (page - 1), searchQuery }) }
                 size="large"
                 variant="contained"
                 className={styles.backButton}
@@ -107,7 +122,7 @@ const ComicTop = ({
                 {'<'}
               </Button> : null
           }
-          <p className={styles.pageNumber}>{page + 1} of {Math.ceil(totalComicBooks / PER_PAGE)}</p>
+          <p className={styles.pageNumber}>{page} of {Math.ceil(totalComicBooks / PER_PAGE)}</p>
           <Select
             value={page}
             onChange={(e) => fetchComicBookList({ page: e.target.value, searchQuery }) }
@@ -115,20 +130,20 @@ const ComicTop = ({
             {
               Array.from(Array(Math.ceil(totalComicBooks / PER_PAGE)), (v, k) => k).map((i) => (
                   // UIに表示されるページ番号は1始まり
-                  <MenuItem value={i}>{i + 1}</MenuItem>
+                  <MenuItem value={i + 1}>{i + 1}</MenuItem>
                 ))
               }
           </Select>
           {
-            page < Math.ceil(totalComicBooks / PER_PAGE) - 1 ?
+            page < Math.ceil(totalComicBooks / PER_PAGE) ?
               <Button
-                onClick={() => fetchComicBookList({ page: page + 1, searchQuery }) }
+                onClick={() => fetchComicBookList({ page: (page + 1), searchQuery }) }
                 size="large"
                 variant="contained"
                 className={styles.forwardButton}
               >
                 {'>'}
-              </Button> : <p>{totalComicBooks}</p>
+              </Button> : null
             }
         </Grid>
       </Grid>
@@ -140,8 +155,9 @@ export const getServerSideProps = async ({ query }): Promise<{props: Props}> => 
   const searchQuery = (query.q) ?
     query.q : ''
   const initialPageNumber = (query.page) ?
-    Math.max(parseInt(query.page) - 1, 0) : 0
+    Math.max(parseInt(query.page), 1) : 1
   const comicBooksRes = await apiClient.indexBooks({ searchQuery, page: initialPageNumber })
+
   return { props: {
     initialShowingComicBooks: comicBooksRes.comicBooks,
     initialTotalComicBooks: comicBooksRes.count,
