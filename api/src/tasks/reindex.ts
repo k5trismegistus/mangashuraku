@@ -11,7 +11,10 @@ class ReindexTask {
   async run() {
     try {
       await esClient.indices.delete({ index: BooksRepository.indexName() })
-
+    } catch(e) {
+      console.log('no index')
+    }
+    try {
       await esClient.indices.create({
         index: BooksRepository.indexName(),
         body: BooksRepository.esIndexConfig,
