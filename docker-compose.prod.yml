@@ -24,6 +24,7 @@ services:
       - MONGODB_HOST
       - MONGODB_PORT
       - MONGODB_DB
+      - ES_HOST
   frontend:
     build:
       context: ./frontend
@@ -53,10 +54,9 @@ services:
     build:
       context: ./elasticsearch
     volumes:
-      - ~public/mangashuraku_data/elasticsearch:/usr/share/elasticsearch/data
+      - ~/public/mangashuraku_data/elasticsearch:/usr/share/elasticsearch/data
     ports:
       - 9200:9200
-      - 9300:9300
     environment:
       - discovery.type=single-node
   minio:
