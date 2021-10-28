@@ -146,7 +146,6 @@ export class BooksRepository {
     const cursor = await this.booksCollection
       .find({ _id: { $in: oids }})
     const results = await cursor.toArray()
-    console.log(await cursor.count())
 
     return results.map((result) => (new Book({
       _id: result._id,

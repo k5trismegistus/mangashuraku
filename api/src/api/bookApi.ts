@@ -1,12 +1,10 @@
 import { Request, Router } from 'express'
 import * as fileUpload from 'express-fileupload'
-import { esClient } from '../lib/elasticsearch'
 import { ImportContext } from '../models/importContext'
 import { BooksRepository } from '../repository/booksRepository'
 import { ReindexTask } from '../tasks/reindex'
 
-type IndexBookRequest = Request & { query: { page: number }}
-type SearchBookRequest = Request & { query: { q: string, page: number }}
+type SearchBookRequest = Request & { query: { q: string, page: string }}
 type GetBookRequest = Request & { params: { bookId: string }}
 type DeleteBookRequest = Request & { params: { bookId: string }}
 
@@ -39,30 +37,34 @@ export const BooksApiRouter = (booksRepository: BooksRepository) => {
     res.send(response_data)
   })
 
-  router.get('/', async (req: IndexBookRequest, res) => {
-    const page = req.query.page
-
-    const result = await booksRepository.indexBook({ limit: PER_PAGE, offset: (PER_PAGE * (page ? page : 0))})
-
-    const response_data = {
-      meta: { total: result.total },
-      data: { books: result.books },
-    }
-    res.send(response_data)
-  })
-
-  router.get('/search', async (req: SearchBookRequest, res) => {
+  router.get('/', async (req: SearchBookRequest, res) => {
+    const page = req.query.page ? parseInt(req.query.page) : 1
     const searchQuery = req.query.q
-    const from = req.query.page ? (req.query.page * PER_PAGE) : 0
 
-    const { total, books} = await booksRepository.searchBook({
-      searchQuery, perPage: PER_PAGE, from,
-    })
+    let responseData
+    if (searchQuery) {
+      const from = (page - 1) * PER_PAGE
 
-    res.send({
-      total,
-      books
-    })
+      const { total, books} = await booksRepository.searchBook({
+        searchQuery, perPage: PER_PAGE, from,
+      })
+
+      responseData = {
+        meta: { total },
+        data: { books }
+      }
+    } else {
+      const result = await booksRepository.indexBook({
+        limit: PER_PAGE, offset: (page - 1) * PER_PAGE
+      })
+
+      responseData = {
+        meta: { total: result.total },
+        data: { books: result.books },
+      }
+    }
+
+    res.send(responseData)
   })
 
   router.post('/reindex', (req, res) => {
